@@ -66,7 +66,7 @@ const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
       resolve: (completed: boolean) => void;
     } | null = null;
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color('#e6e0d3');
+    scene.background = null;
     const camera = new THREE.PerspectiveCamera(39, 1, 0.1, 100);
     const target = new THREE.Vector3(0, 0, 0);
     const markerWorld: THREE.Vector3[] = [];
@@ -104,13 +104,13 @@ const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
     };
 
     try {
-      const activeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'low-power' });
+      const activeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
       renderer = activeRenderer;
       activeRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
       activeRenderer.outputColorSpace = THREE.SRGBColorSpace;
       activeRenderer.toneMapping = THREE.ACESFilmicToneMapping;
       activeRenderer.toneMappingExposure = 1.1;
-      activeRenderer.setClearColor('#e6e0d3');
+      activeRenderer.setClearColor('#f4f0e7', 0);
       activeRenderer.domElement.setAttribute('aria-hidden', 'true');
       mount.appendChild(activeRenderer.domElement);
 
@@ -121,7 +121,9 @@ const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
 
       const groundGeometry = new THREE.PlaneGeometry(19, 14);
       geometries.push(groundGeometry);
-      const ground = new THREE.Mesh(groundGeometry, material('#d8d1c2'));
+      const groundMaterial = new THREE.MeshBasicMaterial({ color: '#f4f0e7', toneMapped: false });
+      materials.push(groundMaterial);
+      const ground = new THREE.Mesh(groundGeometry, groundMaterial);
       ground.rotation.x = -Math.PI / 2;
       ground.position.set(0, -0.12, 0);
       scene.add(ground);

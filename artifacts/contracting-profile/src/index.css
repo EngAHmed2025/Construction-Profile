@@ -555,11 +555,7 @@ html.project-entry-fallback .panorama-page {
   max-height: 720px;
   overflow: hidden;
   isolation: isolate;
-  border: 1px solid #d4cbbb;
-  background:
-    radial-gradient(ellipse at 72% 44%, rgba(250, 246, 237, .6), transparent 48%),
-    #e6e0d3;
-  box-shadow: inset 0 0 70px rgba(91, 80, 63, .08);
+  background: transparent;
 }
 .city-map-canvas { position: absolute; inset: 0; cursor: grab; touch-action: none; outline: none; }
 .city-map-canvas.is-dragging { cursor: grabbing; }
@@ -581,8 +577,8 @@ html.project-entry-fallback .panorama-page {
 .city-map-hint { position: absolute; z-index: 4; right: 15px; bottom: 43px; display: flex; align-items: center; gap: 8px; padding: 8px 10px; color: #f4f0e7; background: rgba(49, 75, 64, .83); font-size: 9px; pointer-events: none; }
 .city-map-hint span { width: 6px; height: 6px; border: 1px solid #e5c09a; border-radius: 50%; }
 .city-map-disclaimer { position: absolute; z-index: 4; right: 15px; bottom: 12px; max-width: calc(100% - 30px); padding: 6px 9px; color: #665f53; background: rgba(244, 240, 231, .91); font-size: 9px; pointer-events: none; }
-.city-map-fallback { background: #e5dfd3; }
-.city-map-static { position: absolute; inset: 0; overflow: hidden; background: repeating-linear-gradient(0deg, transparent 0 48px, rgba(144, 132, 112, .14) 49px 50px), repeating-linear-gradient(90deg, transparent 0 61px, rgba(144, 132, 112, .14) 62px 63px); }
+.city-map-fallback { background: transparent; }
+.city-map-static { position: absolute; inset: 0; overflow: hidden; background: transparent; }
 .static-water { position: absolute; inset: -4% auto -4% -4%; width: 31%; background: #b7cbc4; clip-path: polygon(0 0, 100% 0, 91% 18%, 100% 35%, 89% 53%, 98% 71%, 89% 100%, 0 100%); }
 .static-water span { position: absolute; top: 38%; left: 22%; color: #66847d; font-size: 11px; writing-mode: vertical-rl; }
 .static-coast { position: absolute; top: -8%; bottom: -8%; left: 27%; width: 1px; background: #819f97; transform: rotate(3deg); }
