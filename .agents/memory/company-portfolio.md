@@ -2,8 +2,8 @@
 name: Company portfolio accuracy
 description: Source and display rules for the Diyar website.
 ---
-Use the uploaded company profile and logo as the source of truth for the Diyar Al Khebra site. Keep the Jeddah model, fly-to, and panorama experience without implying map markers are surveyed locations or illustrative views are real footage.
+Use the uploaded company profile and logo as the source of truth for the Diyar Al Khebra site. The site should show the real project photos instead of illustrative panoramas. The Jeddah map is approximate.
 
-**Why:** The user requested a full company rebrand with verified content while retaining those interactions. Some profile pages contain conflicting copied descriptions or lack exact coordinates.
+**Why:** The user identified the company profile as authoritative, flagged copied project names, and asked to replace the panorama viewer with documented project details.
 
-**How to apply:** Cross-check project names, areas, work scope and status against the profile; leave out unclear claims and unverified contacts. Use raster texture assets for the panorama viewer: the browser rendered a viewBox-only SVG in a normal page but showed a black WebGL texture.
+**How to apply:** Use the page headings for الوداد (المروة) and المركاز (المنارات), not the copied الفال name field. Apply «قيد التطوير» only to projects the source identifies as under development and «منفّذ» to projects with aerial evidence marked «بعد التنفيذ». Preserve stated subcontract roles. Match photos to their own project pages, keep areas separate from linear network measurements, and don't assume a landline is registered with WhatsApp.

@@ -7,15 +7,12 @@ import {
   type MouseEvent,
 } from 'react';
 import * as THREE from 'three';
-import { ArrowRight, RotateCcw, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { RotateCcw, ZoomIn, ZoomOut } from 'lucide-react';
 import type { CompanyProject } from './projects';
-import PanoramaViewer from './PanoramaViewer';
 
 type JeddahCityMapProps = {
   projects: CompanyProject[];
   onSelect: (projectId: string, event: MouseEvent<HTMLAnchorElement>) => void;
-  activeProject: CompanyProject | null;
-  onCloseProject: () => void;
 };
 
 export type JeddahCityMapHandle = {
@@ -23,14 +20,16 @@ export type JeddahCityMapHandle = {
 };
 
 const arabicNumber = (value: number) =>
-  String(value).replace(/[0-9]/g, (digit) => '٠١٢٣٤٥٦٧٨٩'[Number(digit)]);
+  String(value);
 
 const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
-  function JeddahCityMap({ projects, onSelect, activeProject, onCloseProject }, ref) {
+  function JeddahCityMap({ projects, onSelect }, ref) {
   const mountRef = useRef<HTMLDivElement>(null);
   const resetRef = useRef<(() => void) | null>(null);
   const flyToRef = useRef<((projectId: string) => Promise<boolean>) | null>(null);
   const [webglUnavailable, setWebglUnavailable] = useState(false);
+  const [zoomHint, setZoomHint] = useState(false);
+  const hintTimer = useRef(0);
 
   useImperativeHandle(ref, () => ({
     flyToProject: (projectId) => flyToRef.current?.(projectId) ?? Promise.resolve(false),
@@ -311,7 +310,7 @@ const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
         });
       };
       const pointerDown = (event: PointerEvent) => {
-        if (flight || (event.target as HTMLElement).closest('a,button')) return;
+        if (flight || event.pointerType === 'touch' || (event.target as HTMLElement).closest('a,button')) return;
         dragging = true;
         pointerId = event.pointerId;
         pointerX = event.clientX;
@@ -332,11 +331,41 @@ const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
         pointerId = null;
         mount.classList.remove('is-dragging');
       };
+      // The page always scrolls on a plain wheel; the map zooms only with Ctrl/Cmd + wheel.
       const wheel = (event: WheelEvent) => {
-        if (flight) return;
+        if (!(event.ctrlKey || event.metaKey)) {
+          window.clearTimeout(hintTimer.current);
+          setZoomHint(true);
+          hintTimer.current = window.setTimeout(() => setZoomHint(false), 1400);
+          return;
+        }
         event.preventDefault();
+        if (flight) return;
         distance = THREE.MathUtils.clamp(distance + event.deltaY * 0.012, 14, 31);
       };
+      // Touch: one finger scrolls the page (touch-action: pan-y); two fingers rotate + pinch-zoom.
+      let pinch: { distance: number; midX: number; midY: number; yaw: number; pitch: number; zoom: number } | null = null;
+      const touchInfo = (touches: TouchList) => {
+        const [a, b] = [touches[0], touches[1]];
+        return {
+          distance: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY),
+          midX: (a.clientX + b.clientX) / 2,
+          midY: (a.clientY + b.clientY) / 2,
+        };
+      };
+      const touchStart = (event: TouchEvent) => {
+        if (event.touches.length !== 2 || flight) { pinch = null; return; }
+        pinch = { ...touchInfo(event.touches), yaw, pitch, zoom: distance };
+      };
+      const touchMove = (event: TouchEvent) => {
+        if (!pinch || event.touches.length !== 2) return;
+        event.preventDefault();
+        const now = touchInfo(event.touches);
+        yaw = pinch.yaw + (now.midX - pinch.midX) * 0.008;
+        pitch = THREE.MathUtils.clamp(pinch.pitch + (pinch.midY - now.midY) * 0.006, 0.22, 1.24);
+        distance = THREE.MathUtils.clamp(pinch.zoom * (pinch.distance / Math.max(now.distance, 1)), 14, 31);
+      };
+      const touchEnd = (event: TouchEvent) => { if (event.touches.length < 2) pinch = null; };
       const zoom = (event: Event) => {
         if (flight) return;
         const amount = (event as CustomEvent<number>).detail;
@@ -354,6 +383,10 @@ const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
       mount.addEventListener('pointerup', pointerUp, { signal: listeners.signal });
       mount.addEventListener('pointercancel', pointerUp, { signal: listeners.signal });
       mount.addEventListener('wheel', wheel, { passive: false, signal: listeners.signal });
+      mount.addEventListener('touchstart', touchStart, { passive: true, signal: listeners.signal });
+      mount.addEventListener('touchmove', touchMove, { passive: false, signal: listeners.signal });
+      mount.addEventListener('touchend', touchEnd, { passive: true, signal: listeners.signal });
+      mount.addEventListener('touchcancel', touchEnd, { passive: true, signal: listeners.signal });
       mount.addEventListener('city-map-zoom', zoom, { signal: listeners.signal });
       resetRef.current = reset;
       flyToRef.current = flyToProject;
@@ -389,9 +422,7 @@ const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
     };
   }, [projects]);
 
-  useEffect(() => {
-    if (!activeProject) resetRef.current?.();
-  }, [activeProject]);
+  useEffect(() => () => window.clearTimeout(hintTimer.current), []);
 
   const changeZoom = (amount: number) => {
     mountRef.current?.dispatchEvent(new CustomEvent('city-map-zoom', { detail: amount }));
@@ -404,7 +435,7 @@ const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
         className="city-map-marker"
         data-city-marker={index}
         style={{ animationDelay: `${index * 140}ms` }}
-        aria-label={`استكشاف المشهد: ${project.title}`}
+        aria-label={`تفاصيل المشروع: ${project.title}`}
         onClick={(event) => onSelect(project.id, event)}
         data-testid={`link-map-pin-${project.id}`}
         tabIndex={webglUnavailable ? 0 : -1}
@@ -422,7 +453,7 @@ const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
             ref={mountRef}
             role="application"
             tabIndex={0}
-            aria-label="مجسم تفاعلي توضيحي لمدينة جدة. اسحب للتدوير واستخدم عجلة الفأرة للتقريب."
+            aria-label="مجسم تفاعلي توضيحي لمدينة جدة. اسحب للتدوير، واستخدم Ctrl مع عجلة الفأرة أو أزرار التكبير للتقريب."
           />
           <div className="city-map-overlay-label city-map-jeddah">جدة <span>تصوّر حضري</span></div>
           <div className="city-map-overlay-label city-map-sea">البحر الأحمر</div>
@@ -446,12 +477,12 @@ const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
               className="city-map-marker static-marker is-visible"
               data-city-marker={index}
               style={{ left: `${project.mapPosition.x}%`, top: `${project.mapPosition.y}%`, animationDelay: `${index * 140}ms` }}
-              aria-label={`استكشاف المشهد: ${project.title}`}
+              aria-label={`تفاصيل المشروع: ${project.title}`}
               onClick={(event) => onSelect(project.id, event)}
               data-testid={`link-map-pin-${project.id}`}
             ><span>{arabicNumber(index + 1)}</span></a>
           ))}
-          <div className="city-map-fallback-note">تعذّر تشغيل العرض الثلاثي الأبعاد؛ اختر علامة لفتح المشروع</div>
+          
         </div>
       )}
       {!webglUnavailable && (
@@ -461,36 +492,8 @@ const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
             <button type="button" onClick={() => changeZoom(2)} aria-label="إبعاد الخريطة" title="إبعاد" data-testid="button-map-zoom-out"><ZoomOut size={17} /></button>
             <button type="button" onClick={() => resetRef.current?.()} aria-label="إعادة ضبط الخريطة" title="إعادة الضبط" data-testid="button-map-reset"><RotateCcw size={16} /></button>
           </div>
-          <div className="city-map-hint"><span /> اسحب للتدوير · عجلة الفأرة للتقريب</div>
+          <div className={`city-map-hint${zoomHint ? ' is-emphasized' : ''}`} aria-live="polite"><span /> Ctrl + عجلة الفأرة للتقريب</div>
         </>
-      )}
-      <div className="city-map-disclaimer">تصوّر ثلاثي الأبعاد تقريبي لأغراض العرض — لا يمثل خريطة فعلية أو مواقع موثقة</div>
-      {activeProject && (
-        <section
-          className="city-map-project-view"
-          key={activeProject.id}
-          aria-label={`مشهد المشروع داخل خريطة جدة: ${activeProject.title}`}
-          data-testid="panel-project-map-view"
-        >
-          <PanoramaViewer image={activeProject.panorama} title={activeProject.title} />
-          <div className="city-project-topbar">
-            <button type="button" onClick={onCloseProject} aria-label="العودة إلى خريطة جدة" data-testid="button-close-project-map-view">
-              <ArrowRight size={17} aria-hidden="true" />
-              <span>خريطة جدة</span>
-            </button>
-            <div className="city-project-title">
-              <span>{activeProject.city} <i>·</i> {activeProject.type}</span>
-              <strong>{activeProject.title}</strong>
-            </div>
-            <button className="city-project-close" type="button" onClick={onCloseProject} aria-label="إغلاق المشهد" title="إغلاق">
-              <X size={18} aria-hidden="true" />
-            </button>
-          </div>
-          <div className="city-project-caption">
-            <span>رسم بانورامي توضيحي عام — لا يصوّر المشروع</span>
-            <p>{activeProject.shortDescription}</p>
-          </div>
-        </section>
       )}
     </div>
   );

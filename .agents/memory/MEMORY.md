@@ -1,1 +1,1 @@
-- [Company portfolio accuracy](company-portfolio.md) — Keep documented Diyar project facts separate from illustrative map locations and panoramas.
+- [Company portfolio accuracy](company-portfolio.md) — Use the company profile for project facts, site photos, and documented completion evidence.
