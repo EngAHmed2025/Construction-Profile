@@ -1,8 +1,9 @@
-import { type ReactNode, useState } from 'react';
+import { type MouseEvent, type ReactNode, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { flushSync } from 'react-dom';
 import NotFound from '@/pages/not-found';
 import {
   ArrowDown,
@@ -63,8 +64,72 @@ function BrandMark() {
 
 function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [, setLocation] = useLocation();
 
   const closeMenu = () => setMenuOpen(false);
+
+  const enterProject = (
+    projectId: string,
+    event: MouseEvent<HTMLAnchorElement>,
+  ) => {
+    if (
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    const target = `/projects/${projectId}`;
+    const source =
+      event.currentTarget.querySelector<HTMLElement>('.map-pin-dot') ??
+      event.currentTarget.querySelector<SVGElement>('svg') ??
+      event.currentTarget;
+    const previousName = source.style.getPropertyValue('view-transition-name');
+    const reducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
+    const transitionDocument = document as Document & {
+      startViewTransition?: (callback: () => void) => {
+        finished: Promise<void>;
+      };
+    };
+
+    if (reducedMotion) {
+      setLocation(target);
+      return;
+    }
+
+    if (!transitionDocument.startViewTransition) {
+      document.documentElement.classList.add('project-entry-fallback');
+      setLocation(target);
+      window.setTimeout(() => {
+        document.documentElement.classList.remove('project-entry-fallback');
+      }, 950);
+      return;
+    }
+
+    source.style.setProperty('view-transition-name', 'project-panorama');
+    try {
+      const transition = transitionDocument.startViewTransition(() => {
+        flushSync(() => setLocation(target));
+      });
+      const clearSourceName = () => {
+        if (previousName) {
+          source.style.setProperty('view-transition-name', previousName);
+        } else {
+          source.style.removeProperty('view-transition-name');
+        }
+      };
+      void transition.finished.then(clearSourceName, clearSourceName);
+    } catch {
+      source.style.removeProperty('view-transition-name');
+      setLocation(target);
+    }
+  };
 
   return (
     <div className="site-shell grain" dir="rtl">
@@ -262,23 +327,24 @@ function Home() {
                 <span className="map-label map-label-sea">البحر الأحمر</span>
                 <span className="map-axis-label">شمال</span>
                 {projects.map((project, index) => (
-                  <Link
+                  <a
                     href={`/projects/${project.id}`}
                     key={project.id}
                     className="map-pin"
                     style={{ left: `${project.mapPosition.x}%`, top: `${project.mapPosition.y}%` }}
                     aria-label={`مشاهدة الجولة الافتراضية: ${project.title}`}
+                    onClick={(event) => enterProject(project.id, event)}
                     data-testid={`link-map-pin-${project.id}`}
                   >
                     <span className="map-pin-number">٠{index + 1}</span>
                     <span className="map-pin-dot" />
-                  </Link>
+                  </a>
                 ))}
                 <span className="map-disclaimer">تصوّر توضيحي — ليس خريطة عقارية</span>
               </div>
               <div className="map-project-list" aria-label="مشاهد افتراضية">
                 {projects.map((project, index) => (
-                  <Link href={`/projects/${project.id}`} className="map-project-row" key={project.id} data-testid={`link-project-${project.id}`}>
+                  <a href={`/projects/${project.id}`} className="map-project-row" key={project.id} onClick={(event) => enterProject(project.id, event)} data-testid={`link-project-${project.id}`}>
                     <span className="map-project-index">٠{index + 1}</span>
                     <span className="map-project-copy">
                       <span className="map-project-type">{project.type} <span>— {project.city}</span></span>
@@ -286,7 +352,7 @@ function Home() {
                       <small>{project.shortDescription}</small>
                     </span>
                     <ArrowUpLeft size={18} aria-hidden="true" />
-                  </Link>
+                  </a>
                 ))}
                 <p className="map-demo-note">جميع المشاهد والصور والنقاط هنا لأغراض العرض التجريبي فقط.</p>
               </div>
