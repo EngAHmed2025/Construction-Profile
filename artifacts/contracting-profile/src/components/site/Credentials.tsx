@@ -1,4 +1,4 @@
-import { Award, ClipboardCheck, Droplets, FileSignature, Landmark } from 'lucide-react';
+import { ArrowUpLeft, Award, ClipboardCheck, Droplets, FileSignature, Landmark } from 'lucide-react';
 
 // Categories of documents reproduced in the company profile (pp. 58–66).
 // Listed as text only — the scans carry signatures and stamps and are not republished here.
@@ -22,6 +22,15 @@ export default function Credentials() {
           </li>
         ))}
       </ul>
+      <a
+        className="site-action site-action-green credentials-documents"
+        href={`${import.meta.env.BASE_URL}diyar-alkhebra-profile.pdf#page=58`}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="عرض وثائق الاعتماد (PDF، يفتح في تبويب جديد)"
+      >
+        عرض وثائق الاعتماد <ArrowUpLeft size={16} aria-hidden="true" />
+      </a>
     </div>
   );
 }

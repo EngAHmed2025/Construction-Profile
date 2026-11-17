@@ -136,6 +136,7 @@ a.wa-float { position: fixed; z-index: 40; bottom: 24px; left: 24px; }
 .credentials-block li svg { margin-top: 3px; color: #8d6a24; }
 .credentials-block strong { color: #2d4239; font-size: 15px; }
 .credentials-block p { margin: 3px 0 0; color: #4b5149; font-size: 14px; line-height: 1.75; }
+.credentials-documents { margin-top: 14px; }
 
 @media (max-width: 980px) {
   .trust-inner { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px 0; }
