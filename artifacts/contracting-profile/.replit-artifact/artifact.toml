@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "موقع شركة مقاولات"
+description = "موقع تعريفي عربي لشركة مقاولات، يعرض نبذة عن الشركة وخدماتها ومشروعاتها ووسائل التواصل."
+version = "1.0.0"
+id = "artifacts/contracting-profile"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18985
+
+[services.development]
+run = "pnpm --filter @workspace/contracting-profile run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/contracting-profile", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/contracting-profile/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18985"
+BASE_PATH = "/"
