@@ -116,8 +116,16 @@ a.wa-float { position: fixed; z-index: 40; bottom: 24px; left: 24px; }
 .partners-strip { padding: 34px 0; background: #ebe6da; border-bottom: 1px solid #d8d1bf; }
 .partners-inner { display: flex; align-items: center; gap: 32px; }
 .partners-inner h2 { flex: 0 0 auto; margin: 0; color: #2d4239; font-size: 16px; font-weight: 700; }
-.partners-list { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 30px; margin: 0; padding: 0; list-style: none; }
+.partners-heading { flex: 0 0 auto; display: flex; flex-direction: column; gap: 10px; }
+.partners-controls { display: flex; gap: 5px; }
+.partners-controls button { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid #c6beaa; background: transparent; color: #2d4239; cursor: pointer; }
+.partners-controls button:hover { background: #dfd8c6; }
+.partners-viewport { flex: 1; min-width: 0; overflow: hidden; cursor: grab; }
+.partners-viewport:active { cursor: grabbing; }
+.partners-list { display: flex; align-items: center; margin: 0; padding: 0; list-style: none; touch-action: pan-y pinch-zoom; user-select: none; }
+.partners-list li { display: grid; place-items: center; flex: 0 0 20%; min-width: 0; min-height: 62px; padding-inline: 10px; }
 .partners-list img { display: block; width: auto; height: 40px; max-width: 150px; object-fit: contain; mix-blend-mode: multiply; }
+@media (prefers-reduced-motion: reduce) { .partners-controls .partners-autoplay { display: none; } }
 
 .about-layout { display: grid; grid-template-columns: 1.15fr .85fr; gap: 64px; align-items: start; }
 .about-lead { font-size: 17px; }
@@ -143,8 +151,10 @@ a.wa-float { position: fixed; z-index: 40; bottom: 24px; left: 24px; }
   .trust-item { padding-inline: 14px; }
   .trust-item:nth-child(odd) { padding-inline-start: 0; border: 0; }
   .partners-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
-  .partners-list { gap: 12px 22px; }
-  .partners-list img { height: 32px; max-width: 120px; }
+  .partners-heading { width: 100%; flex-direction: row; align-items: center; justify-content: space-between; }
+  .partners-viewport { flex: none; width: 100%; }
+  .partners-list li { flex-basis: 33.333%; min-height: 50px; }
+  .partners-list img { height: 32px; max-width: 100%; }
 }
 
 /* ——— Projects cards + detail modal (Phase 4) ——— */
