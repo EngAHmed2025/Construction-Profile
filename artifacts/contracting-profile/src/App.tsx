@@ -15,20 +15,23 @@ import {
   Compass,
   HardHat,
   Layers3,
+  MapPin,
   Menu,
   Ruler,
   ShieldCheck,
   X,
 } from 'lucide-react';
 import {
+  Link,
   Route,
   Switch,
+  useRoute,
   useLocation,
   Router as WouterRouter,
 } from 'wouter';
 import heroImage from './assets/architecture-hero.jpg';
-import residenceImage from './assets/residence-project.jpg';
-import communityImage from './assets/community-project.jpg';
+import { projects } from './projects';
+import PanoramaViewer from './PanoramaViewer';
 
 const queryClient = new QueryClient();
 
@@ -246,43 +249,49 @@ function Home() {
               </div>
               <p>نماذج بصرية توضيحية لمشروعات مدار.<br />تُستبدل بصور وأعمال الشركة المعتمدة.</p>
             </div>
-            <div className="projects-grid">
-              <article className="project-card project-card-large" data-testid="project-card-residential">
-                <a href="#contact" className="project-visual" aria-label="استفسر عن نموذج المشروع السكني">
-                  <img src={residenceImage} alt="واجهة منزل معاصر من الحجر بتفاصيل هندسية هادئة" className="project-image" />
-                  <span className="project-open"><ArrowUpLeft size={20} aria-hidden="true" /></span>
-                  <span className="project-caption">نموذج توضيحي — قابل للاستبدال</span>
-                </a>
-                <div className="project-meta">
-                  <div><span className="project-type">سكني</span><h3>بيت في ضوء النهار</h3></div>
-                  <span className="project-count">٠١ / ٠٣</span>
-                </div>
-              </article>
-              <article className="project-card project-card-offset" data-testid="project-card-community">
-                <a href="#contact" className="project-visual" aria-label="استفسر عن نموذج المركز المجتمعي">
-                  <img src={communityImage} alt="قاعة ثقافية واسعة من الخرسانة والحجر الطبيعي" className="project-image" />
-                  <span className="project-open"><ArrowUpLeft size={20} aria-hidden="true" /></span>
-                  <span className="project-caption">نموذج توضيحي — قابل للاستبدال</span>
-                </a>
-                <div className="project-meta">
-                  <div><span className="project-type">ثقافي</span><h3>مساحة للقاء</h3></div>
-                  <span className="project-count">٠٢ / ٠٣</span>
-                </div>
-              </article>
-              <article className="project-card project-card-note" data-testid="project-card-commercial">
-                <div className="project-note-visual">
-                  <div className="blueprint-mark" aria-hidden="true">
-                    <span /><span /><span /><span /><i /><i />
-                  </div>
-                  <span className="project-caption">تصوّر أولي</span>
-                </div>
-                <div className="project-meta">
-                  <div><span className="project-type">تجاري</span><h3>وجهة تتسع للفكرة</h3></div>
-                  <span className="project-count">٠٣ / ٠٣</span>
-                </div>
-              </article>
+            <div className="map-explainer">
+              <span className="map-city"><MapPin size={16} aria-hidden="true" /> مدينة جدة</span>
+              <p>خريطة تخطيطية لمشاهد ومواقع افتراضية؛ النقاط تقريبية وليست عناوين لمشروعات فعلية.</p>
             </div>
-            <div className="projects-endnote"><span /> كل مشروع له سياقه، وكل تفصيلة لها سبب.</div>
+            <div className="projects-map-layout">
+              <div className="schematic-map" aria-label="خريطة توضيحية لمدينة جدة مع ثلاث نقاط تجريبية">
+                <div className="map-water" aria-hidden="true" />
+                <div className="map-grid-lines" aria-hidden="true" />
+                <div className="map-coastline" aria-hidden="true" />
+                <span className="map-label map-label-city">جدة</span>
+                <span className="map-label map-label-sea">البحر الأحمر</span>
+                <span className="map-axis-label">شمال</span>
+                {projects.map((project, index) => (
+                  <Link
+                    href={`/projects/${project.id}`}
+                    key={project.id}
+                    className="map-pin"
+                    style={{ left: `${project.mapPosition.x}%`, top: `${project.mapPosition.y}%` }}
+                    aria-label={`مشاهدة الجولة الافتراضية: ${project.title}`}
+                    data-testid={`link-map-pin-${project.id}`}
+                  >
+                    <span className="map-pin-number">٠{index + 1}</span>
+                    <span className="map-pin-dot" />
+                  </Link>
+                ))}
+                <span className="map-disclaimer">تصوّر توضيحي — ليس خريطة عقارية</span>
+              </div>
+              <div className="map-project-list" aria-label="مشاهد افتراضية">
+                {projects.map((project, index) => (
+                  <Link href={`/projects/${project.id}`} className="map-project-row" key={project.id} data-testid={`link-project-${project.id}`}>
+                    <span className="map-project-index">٠{index + 1}</span>
+                    <span className="map-project-copy">
+                      <span className="map-project-type">{project.type} <span>— {project.city}</span></span>
+                      <strong>{project.title}</strong>
+                      <small>{project.shortDescription}</small>
+                    </span>
+                    <ArrowUpLeft size={18} aria-hidden="true" />
+                  </Link>
+                ))}
+                <p className="map-demo-note">جميع المشاهد والصور والنقاط هنا لأغراض العرض التجريبي فقط.</p>
+              </div>
+            </div>
+            <div className="projects-endnote"><span /> اختر نقطة لاستكشاف مشهد بانورامي بزاوية ٣٦٠°.</div>
           </div>
         </section>
 
@@ -397,9 +406,50 @@ function Router() {
     <RoutedErrorBoundary>
       <Switch>
         <Route path="/" component={Home} />
+        <Route path="/projects/:id" component={ProjectDetail} />
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>
+  );
+}
+
+function ProjectDetail() {
+  const [, params] = useRoute('/projects/:id');
+  const project = projects.find((item) => item.id === params?.id);
+
+  if (!project) {
+    return <NotFound />;
+  }
+
+  return (
+    <main className="panorama-page grain" dir="rtl">
+      <header className="panorama-header">
+        <div className="container-wide panorama-header-inner">
+          <BrandMark />
+          <Link href="/#projects" className="panorama-back" data-testid="link-back-to-project-map">
+            <ArrowLeft size={17} aria-hidden="true" /> العودة إلى خريطة المشاهد
+          </Link>
+        </div>
+      </header>
+      <section className="panorama-intro container-wide">
+        <div>
+          <span className="eyebrow">جولة افتراضية تجريبية · مدينة جدة</span>
+          <h1>{project.title}</h1>
+          <p>{project.shortDescription}</p>
+        </div>
+        <div className="panorama-index"><span>{project.type}</span><span>٠٣ / {String(projects.indexOf(project) + 1).replace(/[0-9]/g, (digit) => '٠١٢٣٤٥٦٧٨٩'[Number(digit)])}</span></div>
+      </section>
+      <section className="container-wide panorama-stage" aria-label={`المشهد البانورامي: ${project.title}`}>
+        <PanoramaViewer image={project.panorama} title={project.title} />
+        <div className="panorama-demo-label">مشهد توضيحي تجريبي — لا يمثل موقعاً أو مشروعاً منفذاً</div>
+      </section>
+      <section className="container-wide panorama-footer">
+        <div><span className="eyebrow">عن المشهد</span><p>{project.shortDescription} هذه الجولة البانورامية نموذج بصري للتجربة فقط.</p></div>
+        <Link href="/#projects" className="button panorama-return" data-testid="link-panorama-return">
+          العودة إلى المشاهد <ArrowLeft size={16} aria-hidden="true" />
+        </Link>
+      </section>
+    </main>
   );
 }
 
