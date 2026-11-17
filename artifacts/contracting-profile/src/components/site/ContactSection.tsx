@@ -145,10 +145,12 @@ export default function ContactSection({ inquiry }: { inquiry: { details: string
                 <strong>رسالتك جاهزة — لم تُرسل بعد</strong>
                 <p>استقبال الرسائل عبر واتساب غير متاح حالياً، ولم يُرسل استفسارك إلى أي جهة. انسخ الرسالة أو اتصل بنا على الرقم الموحّد.</p>
                 <pre dir="rtl">{pendingMessage}</pre>
-                <button type="button" onClick={copyMessage} className="inquiry-copy" data-testid="button-inquiry-copy">
-                  {copied ? <Check size={15} /> : <Copy size={15} />}<span aria-live="polite">{copied ? 'تم النسخ' : 'انسخ نص الرسالة'}</span>
-                </button>
-                <a href={contactConfig.phoneHref} className="inquiry-call" data-testid="link-inquiry-call"><Phone size={15} /><span dir="ltr">{contactConfig.phone}</span></a>
+                <div className="inquiry-message-actions">
+                  <button type="button" onClick={copyMessage} className="inquiry-copy" data-testid="button-inquiry-copy">
+                    {copied ? <Check size={15} /> : <Copy size={15} />}<span aria-live="polite">{copied ? 'تم النسخ' : 'انسخ نص الرسالة'}</span>
+                  </button>
+                  <a href={contactConfig.phoneHref} className="inquiry-call" data-testid="link-inquiry-call"><Phone size={15} /><span dir="ltr">{contactConfig.phone}</span></a>
+                </div>
               </div>
             </div>
           )}
