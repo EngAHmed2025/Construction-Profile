@@ -468,7 +468,6 @@
 .panorama-index span:last-child { color: #928779; font: 11px var(--app-font-mono); }
 .panorama-stage { position: relative; }
 .panorama-viewer { position: relative; height: min(66vw, 620px); min-height: 370px; overflow: hidden; background: #d9d0c2; border: 1px solid #d5cbbb; }
-.panorama-viewer { view-transition-name: project-panorama; }
 .panorama-canvas { position: absolute; inset: 0; overflow: hidden; cursor: grab; touch-action: none; outline: none; }
 .panorama-canvas.is-dragging { cursor: grabbing; }
 .panorama-canvas canvas { display: block; width: 100%; height: 100%; }
@@ -510,31 +509,58 @@
   .map-project-row, .map-pin, .panorama-tools button { transition: none; }
 }
 
-::view-transition-group(project-panorama) {
-  z-index: 3;
-  animation-duration: 850ms;
-  animation-timing-function: cubic-bezier(.16, 1, .3, 1);
+::view-transition {
+  background: #111713;
 }
-::view-transition-new(project-panorama) {
-  animation: project-scene-arrive 850ms cubic-bezier(.16, 1, .3, 1) both;
+::view-transition-old(root) {
+  transform-origin: center center;
+  animation: project-page-descend 720ms cubic-bezier(.55, 0, .8, .35) both;
 }
-@keyframes project-scene-arrive {
-  from { filter: blur(9px) brightness(.78); }
-  60% { filter: blur(2px) brightness(.94); }
-  to { filter: blur(0) brightness(1); }
+::view-transition-new(root) {
+  transform-origin: center 60%;
+  animation: project-ground-arrival 1380ms cubic-bezier(.16, 1, .3, 1) both;
 }
-
-@keyframes project-page-fallback {
-  from { opacity: 0; transform: scale(.94); filter: blur(8px); }
-  to { opacity: 1; transform: scale(1); filter: blur(0); }
+@keyframes project-page-descend {
+  0% {
+    opacity: 1;
+    transform: perspective(1300px) translate3d(0, 0, 0) scale(1) rotateX(0);
+    filter: blur(0) brightness(1);
+  }
+  45% {
+    opacity: .88;
+    transform: perspective(1300px) translate3d(0, 3vh, 0) scale(.96) rotateX(-2deg);
+    filter: blur(2px) brightness(.82);
+  }
+  100% {
+    opacity: 0;
+    transform: perspective(1300px) translate3d(0, 12vh, 0) scale(.82) rotateX(-8deg);
+    filter: blur(14px) brightness(.28);
+  }
+}
+@keyframes project-ground-arrival {
+  0% {
+    opacity: 0;
+    transform: perspective(1300px) translate3d(0, -8vh, 0) scale(1.24) rotateX(5deg);
+    filter: blur(16px) brightness(.45);
+  }
+  45% {
+    opacity: 1;
+    transform: perspective(1300px) translate3d(0, -1vh, 0) scale(1.05) rotateX(1deg);
+    filter: blur(3px) brightness(.84);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1300px) translate3d(0, 0, 0) scale(1) rotateX(0);
+    filter: blur(0) brightness(1);
+  }
 }
 html.project-entry-fallback .panorama-page {
-  animation: project-page-fallback 850ms cubic-bezier(.16, 1, .3, 1) both;
+  animation: project-ground-arrival 1380ms cubic-bezier(.16, 1, .3, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(project-panorama),
-  ::view-transition-new(project-panorama),
+  ::view-transition-old(root),
+  ::view-transition-new(root),
   html.project-entry-fallback .panorama-page {
     animation-duration: .01ms !important;
   }

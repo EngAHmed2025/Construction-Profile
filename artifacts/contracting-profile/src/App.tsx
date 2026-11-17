@@ -84,11 +84,6 @@ function Home() {
 
     event.preventDefault();
     const target = `/projects/${projectId}`;
-    const source =
-      event.currentTarget.querySelector<HTMLElement>('.map-pin-dot') ??
-      event.currentTarget.querySelector<SVGElement>('svg') ??
-      event.currentTarget;
-    const previousName = source.style.getPropertyValue('view-transition-name');
     const reducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
     ).matches;
@@ -99,34 +94,71 @@ function Home() {
     };
 
     if (reducedMotion) {
+      window.scrollTo({ top: 0, left: 0 });
       setLocation(target);
       return;
     }
 
     if (!transitionDocument.startViewTransition) {
-      document.documentElement.classList.add('project-entry-fallback');
-      setLocation(target);
-      window.setTimeout(() => {
-        document.documentElement.classList.remove('project-entry-fallback');
-      }, 950);
+      const root = document.getElementById('root');
+      if (!root?.animate) {
+        window.scrollTo({ top: 0, left: 0 });
+        setLocation(target);
+        return;
+      }
+
+      if (document.documentElement.classList.contains('project-entry-running')) {
+        return;
+      }
+
+      document.documentElement.classList.add('project-entry-running');
+      const exitAnimation = root.animate(
+        [
+          {
+            opacity: 1,
+            transform: 'perspective(1200px) translate3d(0, 0, 0) scale(1)',
+            filter: 'blur(0) brightness(1)',
+          },
+          {
+            opacity: 0,
+            transform: 'perspective(1200px) translate3d(0, 9vh, 0) scale(.88) rotateX(-6deg)',
+            filter: 'blur(12px) brightness(.35)',
+          },
+        ],
+        {
+          duration: 680,
+          easing: 'cubic-bezier(.55, 0, .8, .35)',
+          fill: 'forwards',
+        },
+      );
+
+      const enterProjectPage = () => {
+        exitAnimation.cancel();
+        window.scrollTo({ top: 0, left: 0 });
+        document.documentElement.classList.remove('project-entry-running');
+        document.documentElement.classList.add('project-entry-fallback');
+        flushSync(() => setLocation(target));
+        window.setTimeout(() => {
+          document.documentElement.classList.remove('project-entry-fallback');
+        }, 1450);
+      };
+
+      void exitAnimation.finished.then(enterProjectPage, () => {
+        document.documentElement.classList.remove('project-entry-running');
+        window.scrollTo({ top: 0, left: 0 });
+        setLocation(target);
+      });
       return;
     }
 
-    source.style.setProperty('view-transition-name', 'project-panorama');
     try {
       const transition = transitionDocument.startViewTransition(() => {
+        window.scrollTo({ top: 0, left: 0 });
         flushSync(() => setLocation(target));
       });
-      const clearSourceName = () => {
-        if (previousName) {
-          source.style.setProperty('view-transition-name', previousName);
-        } else {
-          source.style.removeProperty('view-transition-name');
-        }
-      };
-      void transition.finished.then(clearSourceName, clearSourceName);
+      void transition.finished.catch(() => undefined);
     } catch {
-      source.style.removeProperty('view-transition-name');
+      window.scrollTo({ top: 0, left: 0 });
       setLocation(target);
     }
   };
