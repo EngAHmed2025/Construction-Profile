@@ -1,4 +1,4 @@
-import illustrativePanorama from './assets/illustrative-infrastructure-panorama.svg';
+import illustrativePanorama from './assets/illustrative-infrastructure-panorama.jpg';
 
 export type CompanyProject = {
   id: string;
@@ -37,7 +37,7 @@ export const projects: CompanyProject[] = [
     title: 'مخطط 558 ج/س',
     type: 'أعمال بنية تحتية',
     city: 'جدة',
-    shortDescription: 'أعمال بنية تحتية متعددة التخصصات ضمن نطاق المخطط.',
+    shortDescription: 'المخطط مُدرج تحت التطوير؛ يشمل نطاق العمل الطرق وشبكات المرافق وتنسيق المواقع.',
     area: '315,543.48 م²',
     panorama: illustrativePanorama,
     mapPosition: { x: 72, y: 73 },

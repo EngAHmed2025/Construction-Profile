@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { Route, Switch, useRoute, useLocation, Router as WouterRouter } from 'wouter';
 import logo from './assets/diyar-logo.png';
+import abhurHillsPhoto from './assets/abhur-hills-site.jpg';
 import { projects } from './projects';
 import JeddahCityMap, { type JeddahCityMapHandle } from './JeddahCityMap';
 
@@ -237,9 +238,15 @@ function Home() {
               <p>في مشروع أبْحر هيلز، يجتمع نطاق البنية التحتية مع الطرق والفراغات العامة. مساحة المخطط وفق ملف الشركة 392,087.60 م²، والمشروع مُدرج تحت التطوير.</p>
               <a href="/projects/abhur-hills" onClick={(event) => enterProject('abhur-hills', event)} className="featured-link">استكشف تفاصيل المشروع <ArrowLeft size={16} /></a>
             </div>
-            <div className="featured-spec">
+            <div>
+              <figure className="featured-photo">
+                <img src={abhurHillsPhoto} alt="صورة جوية لموقع مخطط أبحر هيلز أثناء أعمال تطوير البنية التحتية" loading="lazy" width={1280} height={720} />
+                <figcaption>مخطط أبحر هيلز أثناء التطوير · من ملف الشركة</figcaption>
+              </figure>
+              <div className="featured-spec">
               <span>مخطط أبحر هيلز</span><strong>392,087.60</strong><small>متر مربع · مساحة المخطط</small>
               <i /><span className="status-pill"><span /> تحت التطوير</span>
+              </div>
             </div>
           </div>
         </section>
@@ -272,7 +279,7 @@ function Home() {
         <section className="contact-section" id="contact" aria-labelledby="contact-title">
           <div className="contact-pattern" aria-hidden="true" />
           <div className="container-wide contact-grid">
-            <div className="contact-copy"><span className="eyebrow">خطوة الاستفسار الأولى</span><h2 id="contact-title">لديك مشروع؟<br /><em>لنبدأ من نطاقه.</em></h2><p>أرسل نبذة عن المشروع ونطاق الأعمال المطلوب، وسيتضح مسار التواصل المناسب. لا تتوفر بيانات هاتف أو بريد منشورة في هذه الصفحة.</p></div>
+            <div className="contact-copy"><span className="eyebrow">خطوة الاستفسار الأولى</span><h2 id="contact-title">لديك مشروع؟<br /><em>لنبدأ من نطاقه.</em></h2><p>يمكنك نسخ صيغة استفسار وإضافة نبذة عن المشروع ونطاق الأعمال المطلوب. لا تتوفر بيانات تواصل مباشرة في هذه الصفحة.</p></div>
             <div className="contact-panel">
               <span className="contact-number">01 — INQUIRY</span>
               <h3>استفسار عام</h3>
