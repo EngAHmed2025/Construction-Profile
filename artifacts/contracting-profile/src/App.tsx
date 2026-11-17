@@ -33,6 +33,7 @@ import {
 import heroImage from './assets/architecture-hero.jpg';
 import { projects } from './projects';
 import PanoramaViewer from './PanoramaViewer';
+import JeddahCityMap from './JeddahCityMap';
 
 const queryClient = new QueryClient();
 
@@ -348,32 +349,10 @@ function Home() {
             </div>
             <div className="map-explainer">
               <span className="map-city"><MapPin size={16} aria-hidden="true" /> مدينة جدة</span>
-              <p>خريطة تخطيطية لمشاهد ومواقع افتراضية؛ النقاط تقريبية وليست عناوين لمشروعات فعلية.</p>
+              <p>مجسّم ثلاثي الأبعاد توضيحي لجدة؛ مواقع المشروعات تقريبية وليست عناوين فعلية.</p>
             </div>
             <div className="projects-map-layout">
-              <div className="schematic-map" aria-label="خريطة توضيحية لمدينة جدة مع ثلاث نقاط تجريبية">
-                <div className="map-water" aria-hidden="true" />
-                <div className="map-grid-lines" aria-hidden="true" />
-                <div className="map-coastline" aria-hidden="true" />
-                <span className="map-label map-label-city">جدة</span>
-                <span className="map-label map-label-sea">البحر الأحمر</span>
-                <span className="map-axis-label">شمال</span>
-                {projects.map((project, index) => (
-                  <a
-                    href={`/projects/${project.id}`}
-                    key={project.id}
-                    className="map-pin"
-                    style={{ left: `${project.mapPosition.x}%`, top: `${project.mapPosition.y}%` }}
-                    aria-label={`مشاهدة الجولة الافتراضية: ${project.title}`}
-                    onClick={(event) => enterProject(project.id, event)}
-                    data-testid={`link-map-pin-${project.id}`}
-                  >
-                    <span className="map-pin-number">٠{index + 1}</span>
-                    <span className="map-pin-dot" />
-                  </a>
-                ))}
-                <span className="map-disclaimer">تصوّر توضيحي — ليس خريطة عقارية</span>
-              </div>
+              <JeddahCityMap projects={projects} onSelect={enterProject} />
               <div className="map-project-list" aria-label="مشاهد افتراضية">
                 {projects.map((project, index) => (
                   <a href={`/projects/${project.id}`} className="map-project-row" key={project.id} onClick={(event) => enterProject(project.id, event)} data-testid={`link-project-${project.id}`}>

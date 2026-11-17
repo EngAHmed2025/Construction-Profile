@@ -429,20 +429,6 @@
 .map-city svg { color: #a2533c; }
 .map-explainer p { margin: 0; color: #81796e; font-size: 11px; line-height: 1.8; }
 .projects-map-layout { display: grid; grid-template-columns: 1.15fr .85fr; gap: 28px; align-items: stretch; }
-.schematic-map { position: relative; min-height: 490px; overflow: hidden; isolation: isolate; background: #e8e3d8; border: 1px solid #d4cbbb; }
-.map-water { position: absolute; z-index: -2; inset: -15% 71% -15% -13%; background: #d4e0dc; transform: rotate(-8deg); border-inline-end: 1px solid rgba(49,75,64,.16); }
-.map-grid-lines { position: absolute; z-index: -1; inset: 0; opacity: .55; background-image: linear-gradient(28deg, transparent 47.8%, rgba(144,132,112,.2) 48%, rgba(144,132,112,.2) 48.35%, transparent 48.6%), linear-gradient(151deg, transparent 61%, rgba(144,132,112,.18) 61.2%, rgba(144,132,112,.18) 61.5%, transparent 61.7%), repeating-linear-gradient(0deg, transparent 0 62px, rgba(144,132,112,.12) 63px 64px), repeating-linear-gradient(90deg, transparent 0 75px, rgba(144,132,112,.11) 76px 77px); }
-.map-coastline { position: absolute; top: -20%; bottom: -18%; left: 28%; width: 60px; border-inline-start: 1px solid rgba(49,75,64,.25); border-radius: 50%; transform: rotate(13deg); }
-.map-label { position: absolute; color: #7b766b; font-size: 11px; }
-.map-label-city { top: 47%; left: 45%; color: #314b40; font-size: 16px; font-weight: 600; }
-.map-label-sea { top: 64%; left: 5%; color: #758b85; writing-mode: vertical-rl; letter-spacing: .08em; }
-.map-axis-label { position: absolute; top: 18px; left: 19px; color: #6d675e; font-size: 10px; }
-.map-axis-label::before { content: '↑'; display: block; text-align: center; font: 17px var(--app-font-mono); }
-.map-disclaimer { position: absolute; right: 13px; bottom: 12px; padding: 7px 9px; color: #665f53; background: rgba(244,240,231,.86); font-size: 9px; }
-.map-pin { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 6px; color: #f4f0e7; text-decoration: none; transform: translate(-50%,-50%); transition: transform .2s ease; }
-.map-pin:hover, .map-pin:focus-visible { z-index: 2; transform: translate(-50%,-55%) scale(1.06); }
-.map-pin-number { display: grid; width: 38px; height: 31px; place-items: center; color: #f4f0e7; background: #a2533c; box-shadow: 0 4px 12px rgba(56,45,35,.15); font-size: 11px; }
-.map-pin-dot { width: 8px; height: 8px; margin-top: -6px; border: 2px solid #a2533c; border-radius: 50%; background: #f4f0e7; }
 .map-project-list { display: flex; flex-direction: column; border-top: 1px solid #d4cbbb; }
 .map-project-row { display: grid; grid-template-columns: 42px 1fr 20px; gap: 13px; align-items: center; min-height: 137px; padding: 20px 4px; border-bottom: 1px solid #d4cbbb; color: #302f28; text-decoration: none; transition: background .2s ease, padding .2s ease; }
 .map-project-row:hover { padding-inline: 12px; background: #eee9df; }
@@ -487,7 +473,6 @@
 @media (max-width: 767px) {
   .map-explainer { align-items: start; flex-direction: column; gap: 9px; margin: -4px 0 20px; }
   .projects-map-layout { grid-template-columns: 1fr; gap: 24px; }
-  .schematic-map { min-height: 380px; }
   .map-project-row { min-height: 115px; }
   .panorama-page { padding-bottom: 35px; }
   .panorama-header { height: 68px; }
@@ -506,7 +491,7 @@
   .panorama-footer { align-items: start; flex-direction: column; padding-top: 23px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .map-project-row, .map-pin, .panorama-tools button { transition: none; }
+  .map-project-row, .panorama-tools button { transition: none; }
 }
 
 ::view-transition {
@@ -556,6 +541,61 @@
 }
 html.project-entry-fallback .panorama-page {
   animation: project-ground-arrival 1380ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+/* Jeddah 3D city module — a tactile architectural model, explicitly illustrative. */
+.city-map-frame {
+  position: relative;
+  min-height: 490px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid #d4cbbb;
+  background:
+    radial-gradient(ellipse at 72% 44%, rgba(250, 246, 237, .6), transparent 48%),
+    #e6e0d3;
+  box-shadow: inset 0 0 70px rgba(91, 80, 63, .08);
+}
+.city-map-canvas { position: absolute; inset: 0; cursor: grab; touch-action: none; outline: none; }
+.city-map-canvas.is-dragging { cursor: grabbing; }
+.city-map-canvas canvas { display: block; width: 100%; height: 100%; }
+.city-map-canvas:focus-visible { box-shadow: inset 0 0 0 3px #a2533c; }
+.city-map-overlay-label { position: absolute; z-index: 2; pointer-events: none; }
+.city-map-jeddah { top: 43%; left: 47%; color: #314b40; font-size: 20px; font-weight: 700; text-shadow: 0 1px 8px rgba(244, 240, 231, .9); }
+.city-map-jeddah span { display: block; margin-top: 3px; color: #81796e; font-size: 9px; font-weight: 400; }
+.city-map-sea { top: 60%; left: 4%; color: #66847d; font-size: 11px; letter-spacing: .06em; writing-mode: vertical-rl; }
+.city-map-north { position: absolute; top: 17px; left: 18px; display: flex; flex-direction: column; align-items: center; color: #6d675e; font-size: 9px; }
+.city-map-north b { color: #a2533c; font: 19px var(--app-font-mono); }
+.city-map-marker { position: absolute; z-index: 3; display: none; align-items: center; justify-content: center; width: 40px; height: 40px; border: 1px solid rgba(244, 240, 231, .9); border-radius: 50%; color: #f4f0e7; background: #a2533c; box-shadow: 0 4px 15px rgba(48, 47, 40, .27); text-decoration: none; transform: translate(-50%, -50%); transition: transform .18s ease, background .18s ease, box-shadow .18s ease; }
+.city-map-marker.is-visible { display: flex; }
+.city-map-marker span { font-size: 11px; font-weight: 600; }
+.city-map-marker:hover, .city-map-marker:focus-visible { z-index: 5; background: #314b40; box-shadow: 0 6px 20px rgba(48, 47, 40, .34); transform: translate(-50%, -50%) scale(1.12); }
+.city-map-tools { position: absolute; z-index: 6; top: 17px; right: 17px; display: flex; flex-direction: column; gap: 6px; }
+.city-map-tools button { display: grid; width: 39px; height: 39px; place-items: center; color: #314b40; background: rgba(244, 240, 231, .94); border: 1px solid rgba(49, 75, 64, .18); cursor: pointer; transition: color .2s ease, background .2s ease, transform .2s ease; }
+.city-map-tools button:hover { color: #f4f0e7; background: #314b40; transform: translateY(-2px); }
+.city-map-hint { position: absolute; z-index: 4; right: 15px; bottom: 43px; display: flex; align-items: center; gap: 8px; padding: 8px 10px; color: #f4f0e7; background: rgba(49, 75, 64, .83); font-size: 9px; pointer-events: none; }
+.city-map-hint span { width: 6px; height: 6px; border: 1px solid #e5c09a; border-radius: 50%; }
+.city-map-disclaimer { position: absolute; z-index: 4; right: 15px; bottom: 12px; max-width: calc(100% - 30px); padding: 6px 9px; color: #665f53; background: rgba(244, 240, 231, .91); font-size: 9px; pointer-events: none; }
+.city-map-fallback { background: #e5dfd3; }
+.city-map-static { position: absolute; inset: 0; overflow: hidden; background: repeating-linear-gradient(0deg, transparent 0 48px, rgba(144, 132, 112, .14) 49px 50px), repeating-linear-gradient(90deg, transparent 0 61px, rgba(144, 132, 112, .14) 62px 63px); }
+.static-water { position: absolute; inset: -4% auto -4% -4%; width: 31%; background: #b7cbc4; clip-path: polygon(0 0, 100% 0, 91% 18%, 100% 35%, 89% 53%, 98% 71%, 89% 100%, 0 100%); }
+.static-water span { position: absolute; top: 38%; left: 22%; color: #66847d; font-size: 11px; writing-mode: vertical-rl; }
+.static-coast { position: absolute; top: -8%; bottom: -8%; left: 27%; width: 1px; background: #819f97; transform: rotate(3deg); }
+.static-city-grid { position: absolute; inset: 9% 8% 11% 31%; display: grid; grid-template-columns: repeat(7, 1fr); align-items: end; justify-items: center; gap: 8px; transform: perspective(500px) rotateX(28deg) rotateZ(-6deg); }
+.static-city-grid span { width: min(100%, 43px); border: 1px solid rgba(127, 118, 101, .2); background: linear-gradient(90deg, #c4b9a8, #d1c7b7 65%, #b2a794); box-shadow: 4px 5px 0 rgba(107, 98, 83, .12); }
+.static-city-name { position: absolute; top: 42%; left: 50%; color: #314b40; font-size: 20px; font-weight: 700; }
+.static-marker { display: flex; }
+.city-map-fallback-note { position: absolute; right: 12px; bottom: 12px; padding: 8px 10px; color: #f4f0e7; background: rgba(49, 75, 64, .86); font-size: 9px; }
+@media (max-width: 767px) {
+  .city-map-frame { min-height: 390px; }
+  .city-map-jeddah { top: 39%; left: 45%; font-size: 17px; }
+  .city-map-sea { left: 3%; font-size: 9px; }
+  .city-map-tools { top: 10px; right: 10px; gap: 5px; }
+  .city-map-tools button { width: 35px; height: 35px; }
+  .city-map-hint { right: 9px; bottom: 43px; font-size: 8px; }
+  .city-map-disclaimer { right: 9px; bottom: 9px; font-size: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .city-map-marker, .city-map-tools button { transition: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
