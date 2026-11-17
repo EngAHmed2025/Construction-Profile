@@ -428,9 +428,9 @@
 .map-city { display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; color: #314b40; font-size: 13px; font-weight: 600; }
 .map-city svg { color: #a2533c; }
 .map-explainer p { margin: 0; color: #81796e; font-size: 11px; line-height: 1.8; }
-.projects-map-layout { display: grid; grid-template-columns: 1.15fr .85fr; gap: 28px; align-items: stretch; }
-.map-project-list { display: flex; flex-direction: column; border-top: 1px solid #d4cbbb; }
-.map-project-row { display: grid; grid-template-columns: 42px 1fr 20px; gap: 13px; align-items: center; min-height: 137px; padding: 20px 4px; border-bottom: 1px solid #d4cbbb; color: #302f28; text-decoration: none; transition: background .2s ease, padding .2s ease; }
+.projects-map-layout { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: stretch; }
+.map-project-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.map-project-row { display: grid; grid-template-columns: 32px 1fr 20px; gap: 11px; align-items: center; min-height: 132px; padding: 18px 15px; border: 1px solid #d4cbbb; color: #302f28; text-decoration: none; transition: background .2s ease, padding .2s ease; }
 .map-project-row:hover { padding-inline: 12px; background: #eee9df; }
 .map-project-index { align-self: start; padding-top: 4px; color: #a2533c; font: 12px var(--app-font-mono); }
 .map-project-copy { display: flex; flex-direction: column; gap: 6px; }
@@ -440,7 +440,7 @@
 .map-project-copy small { color: #777064; font-size: 11px; line-height: 1.7; }
 .map-project-row > svg { color: #314b40; transition: transform .2s ease; }
 .map-project-row:hover > svg { transform: translate(-3px,-3px); }
-.map-demo-note { margin: 17px 0 0; color: #81796e; font-size: 10px; line-height: 1.9; }
+.map-demo-note { grid-column: 1 / -1; margin: 0; color: #81796e; font-size: 10px; line-height: 1.9; }
 
 .panorama-page { min-height: 100dvh; padding-bottom: 55px; background: #f4f0e7; color: #302f28; }
 .panorama-header { height: 78px; border-bottom: 1px solid rgba(57,48,39,.1); background: rgba(244,240,231,.94); }
@@ -546,7 +546,10 @@ html.project-entry-fallback .panorama-page {
 /* Jeddah 3D city module — a tactile architectural model, explicitly illustrative. */
 .city-map-frame {
   position: relative;
-  min-height: 490px;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 420px;
+  max-height: 720px;
   overflow: hidden;
   isolation: isolate;
   border: 1px solid #d4cbbb;
@@ -623,7 +626,10 @@ html.project-entry-fallback .panorama-page {
   100% { opacity: .25; }
 }
 @media (max-width: 767px) {
-  .city-map-frame { min-height: 390px; }
+  .map-project-list { grid-template-columns: 1fr; gap: 0; }
+  .map-project-row { min-height: 110px; padding: 17px 4px; border-width: 0 0 1px; }
+  .map-demo-note { margin-top: 10px; }
+  .city-map-frame { aspect-ratio: 4 / 3; min-height: 280px; max-height: 390px; }
   .city-map-jeddah { top: 39%; left: 45%; font-size: 17px; }
   .city-map-sea { left: 3%; font-size: 9px; }
   .city-map-tools { top: 10px; right: 10px; gap: 5px; }

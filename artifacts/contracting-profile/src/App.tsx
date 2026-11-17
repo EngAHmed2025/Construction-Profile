@@ -36,9 +36,9 @@ const queryClient = new QueryClient();
 
 const navigation = [
   { label: 'الرئيسية', href: '#home' },
+  { label: 'مشروعات مختارة', href: '#projects' },
   { label: 'من نحن', href: '#about' },
   { label: 'خدماتنا', href: '#services' },
-  { label: 'مشروعات مختارة', href: '#projects' },
   { label: 'منهجنا', href: '#approach' },
 ];
 
@@ -211,9 +211,49 @@ function Home() {
               <span>٠١</span><span className="index-line" /><span>٠٦</span>
             </div>
           </div>
-          <a href="#about" className="scroll-cue" aria-label="انتقل إلى نبذة عن مدار" data-testid="link-scroll-about">
-            <span>اكتشف مدار</span><ArrowDown size={15} aria-hidden="true" />
+          <a href="#projects" className="scroll-cue" aria-label="انتقل إلى مشروعات مدار" data-testid="link-scroll-projects">
+            <span>استكشف مشروعاتنا</span><ArrowDown size={15} aria-hidden="true" />
           </a>
+        </section>
+
+        <section className="projects-section" id="projects" aria-labelledby="projects-title">
+          <div className="container-wide">
+            <div className="projects-heading">
+              <div>
+                <span className="eyebrow">مساحات لها معنى</span>
+                <h2 id="projects-title" className="section-title">أعمال تبدأ<br />بـ <span>رؤية واضحة.</span></h2>
+              </div>
+              <p>نماذج بصرية توضيحية لمشروعات مدار.<br />تُستبدل بصور وأعمال الشركة المعتمدة.</p>
+            </div>
+            <div className="map-explainer">
+              <span className="map-city"><MapPin size={16} aria-hidden="true" /> مدينة جدة</span>
+              <p>مجسّم ثلاثي الأبعاد توضيحي لجدة؛ مواقع المشروعات تقريبية وليست عناوين فعلية.</p>
+            </div>
+            <div className="projects-map-layout">
+              <JeddahCityMap
+                ref={cityMapRef}
+                projects={projects}
+                onSelect={enterProject}
+                activeProject={activeProject}
+                onCloseProject={closeProject}
+              />
+              <div className="map-project-list" aria-label="مشاهد افتراضية">
+                {projects.map((project, index) => (
+                  <a href={`/projects/${project.id}`} className="map-project-row" key={project.id} onClick={(event) => enterProject(project.id, event)} data-testid={`link-project-${project.id}`}>
+                    <span className="map-project-index">٠{index + 1}</span>
+                    <span className="map-project-copy">
+                      <span className="map-project-type">{project.type} <span>— {project.city}</span></span>
+                      <strong>{project.title}</strong>
+                      <small>{project.shortDescription}</small>
+                    </span>
+                    <ArrowUpLeft size={18} aria-hidden="true" />
+                  </a>
+                ))}
+                <p className="map-demo-note">جميع المشاهد والصور والنقاط هنا لأغراض العرض التجريبي فقط.</p>
+              </div>
+            </div>
+            <div className="projects-endnote"><span /> اختر نقطة لاستكشاف مشهد بانورامي بزاوية ٣٦٠°.</div>
+          </div>
         </section>
 
         <section className="intro-section" id="about" aria-labelledby="about-title">
@@ -298,46 +338,6 @@ function Home() {
               </article>
             </div>
             <p className="service-footnote">تُحدّد نطاقات الخدمات النهائية وفق احتياج المشروع واتفاق الطرفين.</p>
-          </div>
-        </section>
-
-        <section className="projects-section" id="projects" aria-labelledby="projects-title">
-          <div className="container-wide">
-            <div className="projects-heading">
-              <div>
-                <span className="eyebrow">مساحات لها معنى</span>
-                <h2 id="projects-title" className="section-title">أعمال تبدأ<br />بـ <span>رؤية واضحة.</span></h2>
-              </div>
-              <p>نماذج بصرية توضيحية لمشروعات مدار.<br />تُستبدل بصور وأعمال الشركة المعتمدة.</p>
-            </div>
-            <div className="map-explainer">
-              <span className="map-city"><MapPin size={16} aria-hidden="true" /> مدينة جدة</span>
-              <p>مجسّم ثلاثي الأبعاد توضيحي لجدة؛ مواقع المشروعات تقريبية وليست عناوين فعلية.</p>
-            </div>
-            <div className="projects-map-layout">
-              <JeddahCityMap
-                ref={cityMapRef}
-                projects={projects}
-                onSelect={enterProject}
-                activeProject={activeProject}
-                onCloseProject={closeProject}
-              />
-              <div className="map-project-list" aria-label="مشاهد افتراضية">
-                {projects.map((project, index) => (
-                  <a href={`/projects/${project.id}`} className="map-project-row" key={project.id} onClick={(event) => enterProject(project.id, event)} data-testid={`link-project-${project.id}`}>
-                    <span className="map-project-index">٠{index + 1}</span>
-                    <span className="map-project-copy">
-                      <span className="map-project-type">{project.type} <span>— {project.city}</span></span>
-                      <strong>{project.title}</strong>
-                      <small>{project.shortDescription}</small>
-                    </span>
-                    <ArrowUpLeft size={18} aria-hidden="true" />
-                  </a>
-                ))}
-                <p className="map-demo-note">جميع المشاهد والصور والنقاط هنا لأغراض العرض التجريبي فقط.</p>
-              </div>
-            </div>
-            <div className="projects-endnote"><span /> اختر نقطة لاستكشاف مشهد بانورامي بزاوية ٣٦٠°.</div>
           </div>
         </section>
 
