@@ -69,6 +69,29 @@ function Home() {
   const activeProject = projects.find((project) => project.id === projectParams?.id) ?? null;
 
   useEffect(() => {
+    const sections = Array.from(
+      document.querySelectorAll<HTMLElement>('.site-shell main > section:not(.hero)'),
+    );
+    sections.forEach((section) => section.classList.add('section-reveal'));
+
+    if (!('IntersectionObserver' in window)) {
+      sections.forEach((section) => section.classList.add('is-in-view'));
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-in-view');
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     if (!activeProject) return;
     document.getElementById('projects')?.scrollIntoView({
       behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
