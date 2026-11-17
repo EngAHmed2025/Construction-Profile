@@ -34,7 +34,7 @@ export default function ProjectModal({ project, onClose, onInquire }: Props) {
             <>
               <div className="pm-gallery">
                 {photo ? (
-                  <figure className="pm-main">
+                  <figure className={`pm-main${['alfal-alsawari', 'alwedad-almarwah', 'almarkaz-almanarat'].includes(project.id) || (project.id === 'almousa-view' && index === 0) ? ' is-document' : ''}`}>
                     <img key={photo.src} src={photo.src} alt={`${project.title} — ${photo.caption}`} decoding="async" />
                     <figcaption>{photo.caption} <span>· من ملف الشركة</span></figcaption>
                     {photos.length > 1 && (

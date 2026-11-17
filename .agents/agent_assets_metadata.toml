@@ -1,0 +1,30 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "FkSIkUFClvsiggZeSrOTS"
+uri = "file://generated-artifacts/visual-polish/before-after-390px.pdf"
+type = "pdf"
+title = "قبل وبعد — موبايل 390 بكسل"
+description = "لقطات للواجهة والمشروعات والشركاء ونطاق الأعمال والشهادات والنوافذ."
+logical_id = "3aeb74e0-cc2d-43e8-8848-f629f9847d86"
+content_hash = "sha256:1cd4e011fb683b272efd578e5678f8bbe09bba2fe68e6372617ac7be5a7b4b92"
+size = 573266
+mtime_ms = 1794949780362
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/3aeb74e0-cc2d-43e8-8848-f629f9847d86/2257f3a5-40c5-42e7-8d02-31e2fe89da5d"
+storage_version_token = "1794949795068813"
+content_type = "application/pdf"
+
+[[outputs]]
+id = "5QjQuNURrGW9X1qCdFdPC"
+uri = "file://generated-artifacts/visual-polish/before-after-1440px.pdf"
+type = "pdf"
+title = "قبل وبعد — كمبيوتر 1440 بكسل"
+description = "لقطات مقارنة للأقسام المعدّلة، مع صور معاينة للشهادات بالحجم الكامل."
+logical_id = "529cf09a-b953-40e4-ad5c-5945ea30b4e4"
+content_hash = "sha256:cacee6d42aa3391641761686abd127ee54b89c5310172e9ce2a53a65ca4cd854"
+size = 1605815
+mtime_ms = 1794949780458
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/529cf09a-b953-40e4-ad5c-5945ea30b4e4/757777b5-d5fe-4e1b-ba09-612150318879"
+storage_version_token = "1794949795641909"
+content_type = "application/pdf"

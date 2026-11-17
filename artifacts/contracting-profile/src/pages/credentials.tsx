@@ -1,16 +1,8 @@
 import { useEffect, useState } from 'react';
 import { ArrowRight, FileText, ZoomIn, ZoomOut } from 'lucide-react';
 import logo from '@/assets/diyar-logo.webp';
+import { credentialDocuments as documents } from '@/credentialDocuments';
 import './credentials.css';
-
-const documents = [
-  { page: 59, name: 'شهادة تأهيل مطوّر عقاري' },
-  { page: 60, name: 'خطاب أمانة محافظة جدة' },
-  { page: 63, name: 'اعتمادات المياه الوطنية ومحاضر الاستلام' },
-  { page: 64, name: 'خطابات اعتماد مخططي الهملان واليحيى' },
-  { page: 65, name: 'إقرار شركة المياه الوطنية' },
-  { page: 66, name: 'اتفاقية هيئة الاتصالات والفضاء والتقنية' },
-] as const;
 
 export default function CredentialsPage() {
   const [selected, setSelected] = useState<number>(0);

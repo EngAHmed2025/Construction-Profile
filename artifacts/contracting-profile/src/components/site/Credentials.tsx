@@ -1,5 +1,8 @@
-import { ArrowUpLeft, Award, ClipboardCheck, Droplets, FileSignature, Landmark } from 'lucide-react';
+import { useRef, useState } from 'react';
+import * as Dialog from '@radix-ui/react-dialog';
+import { ArrowUpLeft, Award, ClipboardCheck, Droplets, FileSignature, Landmark, X } from 'lucide-react';
 import { Link } from 'wouter';
+import { credentialDocuments } from '@/credentialDocuments';
 
 // Categories of documents reproduced in the company profile (pp. 58–66).
 // The home section summarizes the documents; the dedicated page shows the scans.
@@ -12,9 +15,13 @@ const credentials = [
 ];
 
 export default function Credentials() {
+  const [selected, setSelected] = useState<(typeof credentialDocuments)[number] | null>(null);
+  const returnFocus = useRef<HTMLButtonElement>(null);
+  const base = `${import.meta.env.BASE_URL}credentials/`;
   return (
     <div className="credentials-block" aria-labelledby="credentials-title">
       <h3 id="credentials-title">اعتمادات وشهادات</h3>
+      <div className="credentials-preview-layout">
       <ul>
         {credentials.map(({ icon: Icon, title, text }) => (
           <li key={title}>
@@ -23,6 +30,33 @@ export default function Credentials() {
           </li>
         ))}
       </ul>
+      <Dialog.Root open={selected !== null} onOpenChange={(open) => { if (!open) setSelected(null); }}>
+        <div className="credentials-preview-grid" aria-label="معاينة وثائق الاعتماد">
+          {credentialDocuments.map((doc) => (
+            <button key={doc.page} type="button" aria-label={`عرض ${doc.name}`} onClick={(event) => { returnFocus.current = event.currentTarget; setSelected(doc); }}>
+              <img src={`${base}page-${doc.page}-sm.webp`} alt="" loading="lazy" decoding="async" />
+              <span>{doc.name}</span>
+            </button>
+          ))}
+        </div>
+        <Dialog.Portal>
+          <Dialog.Overlay className="pm-overlay" />
+          <Dialog.Content className="credential-lightbox" dir="rtl" aria-describedby={undefined} onCloseAutoFocus={(event) => { event.preventDefault(); returnFocus.current?.focus(); }}>
+            {selected && (
+              <>
+                <header>
+                  <Dialog.Title>{selected.name}</Dialog.Title>
+                  <Dialog.Close aria-label="إغلاق الوثيقة"><X size={20} /></Dialog.Close>
+                </header>
+                <div className="credential-lightbox-image" role="region" aria-label="صورة الوثيقة الكاملة" tabIndex={0}>
+                  <img src={`${base}page-${selected.page}.webp`} alt={selected.name} />
+                </div>
+              </>
+            )}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+      </div>
       <Link
         className="site-action site-action-green credentials-documents"
         href="/credentials"

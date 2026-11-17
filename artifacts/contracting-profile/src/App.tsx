@@ -17,8 +17,8 @@ import CredentialsPage from '@/pages/credentials';
 
 const ContactSection = lazy(() => import('@/components/site/ContactSection'));
 const ProjectModal = lazy(() => import('@/components/site/ProjectModal'));
-const heroPhoto = `${import.meta.env.BASE_URL}hero-site.webp`;
-const heroPhotoSmall = `${import.meta.env.BASE_URL}hero-site-sm.webp`;
+const heroPhoto = `${import.meta.env.BASE_URL}hero-finished.webp`;
+const heroPhotoSmall = `${import.meta.env.BASE_URL}hero-finished-sm.webp`;
 
 const navigation = [
   { label: 'المشروعات', href: '#projects' },
@@ -159,9 +159,9 @@ function Home() {
             <figure className="hero-photo">
               <picture>
                 <source media="(max-width: 767px)" srcSet={heroPhotoSmall} />
-                <img src={heroPhoto} alt="صورة جوية لأعمال التسوية وتنفيذ البنية التحتية في مخطط 558 بجدة" width={1600} height={892} fetchPriority="high" />
+                <img src={heroPhoto} alt="طريق مرصوف ومضاء في مخطط الهملان بجدة بعد التنفيذ" width={1074} height={599} fetchPriority="high" />
               </picture>
-              <figcaption>مخطط 558 ج/س — أثناء التطوير وتنفيذ البنية التحتية</figcaption>
+              <figcaption>مخطط الهملان 674 ج/س — الطرق والإنارة بعد التنفيذ</figcaption>
             </figure>
           </div>
         </section>
@@ -182,7 +182,7 @@ function Home() {
         <section className="services-section" id="services" aria-labelledby="services-title">
           <div className="container-wide">
             <div className="section-heading services-heading">
-              <div><span className="eyebrow">نطاق الأعمال</span><h2 id="services-title">خدمات مترابطة. <span>موقع يعمل كما خُطّط له.</span></h2></div>
+              <div><span className="eyebrow">نطاق الأعمال</span><h2 id="services-title">خدمات مترابطة.<br /><span>موقع يعمل كما خُطّط له.</span></h2></div>
               <p>تتحدد تفاصيل التنفيذ وفق مستندات المشروع ومتطلباته والجهات المعنية.</p>
             </div>
             <div className="services-grid">

@@ -1,8 +1,9 @@
 import { lazy, type MouseEvent, Suspense, useEffect, useRef, useState } from 'react';
-import { ArrowUpLeft, ImageOff, LayoutGrid, Map as MapIcon } from 'lucide-react';
+import { ArrowUpLeft, LayoutGrid, Map as MapIcon } from 'lucide-react';
 import { projects, projectMeasure, type CompanyProject } from '@/projects';
 import type { JeddahCityMapHandle } from '@/JeddahCityMap';
 import StatusBadge from './StatusBadge';
+import mousaCover from '@/assets/projects/mousa-cover.webp';
 
 const loadMap = () => import('@/JeddahCityMap');
 const JeddahCityMap = lazy(loadMap);
@@ -14,21 +15,38 @@ type Filter = 'all' | 'done' | 'developing';
 const filters: { id: Filter; label: string; match: (project: CompanyProject) => boolean }[] = [
   { id: 'all', label: 'الكل', match: () => true },
   { id: 'done', label: 'منفّذ', match: (project) => project.status === 'منفّذ' },
-  { id: 'developing', label: 'قيد / تحت التطوير', match: (project) => project.status === 'قيد التطوير' || project.status === 'تحت التطوير' },
+  { id: 'developing', label: 'قيد التطوير', match: (project) => project.status === 'قيد التطوير' || project.status === 'تحت التطوير' },
+];
+
+const frontRow = ['hamlan-674', 'yahya-alwisam', 'shams-al-arous'];
+const planOnly = new Set(['alfal-alsawari', 'alwedad-almarwah', 'almarkaz-almanarat']);
+const representative = projects.find(({ id }) => id === 'red-sea-village-alma')?.photos[0];
+const orderedProjects = [
+  ...frontRow.flatMap((id) => projects.filter((project) => project.id === id)),
+  ...projects.filter((project) => !frontRow.includes(project.id) && !planOnly.has(project.id) && project.id !== 'obhur-complex'),
+  ...projects.filter((project) => planOnly.has(project.id) || project.id === 'obhur-complex'),
 ];
 
 function ProjectCard({ project, onOpen }: { project: CompanyProject; onOpen: (id: string, event: MouseEvent<HTMLAnchorElement>) => void }) {
   const measure = projectMeasure(project);
-  const cover = project.photos[0];
+  const isRepresentative = project.id === 'obhur-complex';
+  const cover = isRepresentative ? representative?.thumb : planOnly.has(project.id) ? undefined : ({
+    'hamlan-674': project.photos[0]?.thumb,
+    'yahya-alwisam': project.photos[7]?.thumb,
+    'shams-al-arous': project.photos[5]?.thumb,
+    'almousa-view': mousaCover,
+  }[project.id] ?? project.photos[0]?.thumb);
   return (
     <a href={`/projects/${project.id}`} className="project-card" onClick={(event) => onOpen(project.id, event)} data-testid={`card-project-${project.id}`}>
-      <span className="project-card-media">
-        {cover
-          ? <img src={cover.thumb} alt="" loading="lazy" decoding="async" width={720} height={405} />
-          : <span className="project-card-placeholder"><ImageOff size={22} strokeWidth={1.4} /><span>لا تتوفر صورة موقع في ملف الشركة</span></span>}
-        <span className="project-card-number">{project.number}</span>
-        {project.photos.length > 1 && <span className="project-card-count">{project.photos.length} صور</span>}
-      </span>
+      {cover && (
+        <span className="project-card-media">
+          <img src={cover} alt="" loading="lazy" decoding="async" width={720} height={540} />
+          <span className="project-card-number">{project.number}</span>
+          {isRepresentative
+            ? <span className="project-card-count">صورة توضيحية لأعمال شبكات من مشروع آخر</span>
+            : project.photos.length > 1 && <span className="project-card-count">{project.photos.length} صور</span>}
+        </span>
+      )}
       <span className="project-card-body">
         <span className="project-card-meta">
           {project.status && <StatusBadge status={project.status} />}
@@ -51,7 +69,7 @@ export default function ProjectsSection({ onOpenProject }: Props) {
   const [filter, setFilter] = useState<Filter>('all');
   const cityMapRef = useRef<JeddahCityMapHandle>(null);
   const pending = useRef(false);
-  const visible = projects.filter(filters.find((entry) => entry.id === filter)!.match);
+  const visible = orderedProjects.filter(filters.find((entry) => entry.id === filter)!.match);
 
   const sectionRef = useRef<HTMLElement>(null);
   useEffect(() => { pending.current = false; }, [view]);
