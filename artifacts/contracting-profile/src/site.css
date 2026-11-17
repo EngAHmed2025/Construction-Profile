@@ -37,7 +37,7 @@
 .site-footer { color: #e9e4d7; background: #223830; }
 .footer-grid { display: grid; grid-template-columns: 1.4fr .8fr 1.1fr; gap: 48px; padding: 64px 0 40px; }
 .footer-logo { display: inline-flex; align-items: center; gap: 14px; color: #f4efe2; text-decoration: none; }
-.footer-logo img { width: 64px; height: auto; padding: 6px; background: #f2efe5; border-radius: 6px; }
+.footer-logo img { width: 64px; height: auto; }
 .footer-logo strong { display: block; font-size: 18px; font-weight: 600; }
 .footer-logo small { display: block; margin-top: 4px; color: #d7bb74; font: 700 11px/1.4 var(--app-font-mono); letter-spacing: .06em; }
 .footer-brand > p { max-width: 420px; margin: 18px 0 0; color: #cfd2c6; font-size: 15px; line-height: 1.9; }
