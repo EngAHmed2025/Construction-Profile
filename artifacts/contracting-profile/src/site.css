@@ -127,8 +127,8 @@ a.wa-float { position: fixed; z-index: 40; bottom: 24px; left: 24px; }
 .partners-viewport { flex: 1; min-width: 0; overflow: hidden; cursor: grab; }
 .partners-viewport:active { cursor: grabbing; }
 .partners-list { display: flex; align-items: center; margin: 0; padding: 0; list-style: none; touch-action: pan-y pinch-zoom; user-select: none; }
-.partners-list li { display: flex; align-items: center; justify-content: center; flex: 0 0 25%; min-width: 0; min-height: 62px; padding-inline: 22px; }
-.partners-list img { display: block; width: auto; height: 40px; max-width: min(100%, 150px); object-fit: contain; mix-blend-mode: multiply; }
+.partners-list li { display: flex; align-items: center; justify-content: center; flex: 0 0 25%; min-width: 0; min-height: 68px; padding-inline: 24px; }
+.partners-list img { display: block; width: auto; height: 49px; max-width: min(100%, 176px); object-fit: contain; mix-blend-mode: multiply; }
 
 .about-layout { display: grid; grid-template-columns: 1.15fr .85fr; gap: 64px; align-items: start; }
 .about-lead { font-size: 17px; }
@@ -157,8 +157,8 @@ a.wa-float { position: fixed; z-index: 40; bottom: 24px; left: 24px; }
   .partners-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
   .partners-heading { width: 100%; flex-direction: row; align-items: center; justify-content: space-between; }
   .partners-viewport { flex: none; width: 100%; }
-  .partners-list li { flex-basis: 50%; min-height: 50px; padding-inline: 18px; }
-  .partners-list img { height: 32px; max-width: min(100%, 120px); }
+  .partners-list li { flex-basis: 50%; min-height: 56px; padding-inline: 20px; }
+  .partners-list img { height: 40px; max-width: min(100%, 144px); }
 }
 
 /* ——— Projects cards + detail modal (Phase 4) ——— */

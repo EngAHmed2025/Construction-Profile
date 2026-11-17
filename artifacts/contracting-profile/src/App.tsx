@@ -168,7 +168,7 @@ function Home() {
 
         <section className="trust-strip" aria-label="أرقام من ملف الشركة">
           <div className="container-wide trust-inner">
-            <div className="trust-item"><strong dir="ltr">{formatNumber(Math.round(totalAreaM2))}</strong><span>م² إجمالي مساحات المشروعات المدرجة</span></div>
+            <div className="trust-item"><strong><bdi dir="ltr">{formatNumber(Math.round(totalAreaM2))}</bdi></strong><span>إجمالي مساحات المشروعات المدرجة (م²)</span></div>
             <div className="trust-item"><strong>{projects.length}</strong><span>مشروعاً في ملف الشركة، منها {completedCount} منفّذة</span></div>
             <div className="trust-item"><strong>جدة</strong><span>جميع المشروعات داخل المدينة</span></div>
             <div className="trust-item"><strong>NWC</strong><span>اعتمادات لدى شركة المياه الوطنية وأمانة جدة</span></div>
