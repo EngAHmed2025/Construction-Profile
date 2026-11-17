@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const logoFiles = import.meta.glob<string>('../../assets/partners/*.webp', { eager: true, import: 'default' });
 const logo = (name: string) => logoFiles[`../../assets/partners/${name}.webp`];
@@ -25,7 +25,6 @@ const partners = [
 
 export default function PartnersStrip() {
   const [viewportRef, carousel] = useEmblaCarousel({ direction: 'rtl', loop: true, align: 'start', breakpoints: { '(prefers-reduced-motion: reduce)': { duration: 0 } } });
-  const [paused, setPaused] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [dragging, setDragging] = useState(false);
 
@@ -38,13 +37,13 @@ export default function PartnersStrip() {
   }, [carousel]);
 
   useEffect(() => {
-    if (!carousel || paused || hovered || dragging) return;
+    if (!carousel || hovered || dragging) return;
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const timer = window.setInterval(() => {
-      if (!motion.matches && !document.hidden) carousel.scrollNext();
+      if (!motion.matches && !document.hidden && !document.activeElement?.closest('.partners-strip')) carousel.scrollNext();
     }, 2600);
     return () => window.clearInterval(timer);
-  }, [carousel, paused, hovered, dragging]);
+  }, [carousel, hovered, dragging]);
 
   return (
     <section id="partners" className="partners-strip" aria-labelledby="partners-title"
@@ -55,9 +54,6 @@ export default function PartnersStrip() {
           <div className="partners-controls" role="group" aria-label="التحكم في عرض الشعارات">
             <button type="button" aria-label="الشعار السابق" onClick={() => carousel?.scrollPrev()}><ChevronRight size={17} aria-hidden="true" /></button>
             <button type="button" aria-label="الشعار التالي" onClick={() => carousel?.scrollNext()}><ChevronLeft size={17} aria-hidden="true" /></button>
-            <button type="button" className="partners-autoplay" aria-label="إيقاف الحركة التلقائية" aria-pressed={paused} onClick={() => setPaused((value) => !value)}>
-              {paused ? <Play size={14} aria-hidden="true" /> : <Pause size={14} aria-hidden="true" />}
-            </button>
           </div>
         </div>
         <div className="partners-viewport" dir="rtl" ref={viewportRef}>
