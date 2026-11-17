@@ -13,6 +13,7 @@ import PartnersStrip from '@/components/site/PartnersStrip';
 import ProjectsSection from '@/components/site/ProjectsSection';
 import SiteFooter from '@/components/site/SiteFooter';
 import WhatsAppFloat from '@/components/site/WhatsAppFloat';
+import CredentialsPage from '@/pages/credentials';
 
 const ContactSection = lazy(() => import('@/components/site/ContactSection'));
 const ProjectModal = lazy(() => import('@/components/site/ProjectModal'));
@@ -235,7 +236,7 @@ function Home() {
 }
 
 function Router() {
-  return <RoutedErrorBoundary><Switch><Route path="/" component={Home} /><Route path="/projects/:id" component={Home} /><Route component={NotFound} /></Switch></RoutedErrorBoundary>;
+  return <RoutedErrorBoundary><Switch><Route path="/" component={Home} /><Route path="/credentials" component={CredentialsPage} /><Route path="/projects/:id" component={Home} /><Route component={NotFound} /></Switch></RoutedErrorBoundary>;
 }
 
 function RoutedErrorBoundary({ children }: { children: ReactNode }) {

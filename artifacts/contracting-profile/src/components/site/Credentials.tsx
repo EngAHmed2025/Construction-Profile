@@ -1,7 +1,8 @@
 import { ArrowUpLeft, Award, ClipboardCheck, Droplets, FileSignature, Landmark } from 'lucide-react';
+import { Link } from 'wouter';
 
 // Categories of documents reproduced in the company profile (pp. 58–66).
-// Listed as text only — the scans carry signatures and stamps and are not republished here.
+// The home section summarizes the documents; the dedicated page shows the scans.
 const credentials = [
   { icon: Droplets, title: 'اعتمادات شركة المياه الوطنية', text: 'اعتماد ديار الخبرة لدى شركة المياه الوطنية لمشروع مخطط شمس العروس.' },
   { icon: Landmark, title: 'اعتمادات أمانة محافظة جدة', text: 'خطاب عدم ممانعة لاعتماد ديار الخبرة مقاولاً لمخطط الهملان، وخطاب اعتمادها مقاولاً لمخطط اليحيى.' },
@@ -22,15 +23,12 @@ export default function Credentials() {
           </li>
         ))}
       </ul>
-      <a
+      <Link
         className="site-action site-action-green credentials-documents"
-        href={`${import.meta.env.BASE_URL}diyar-alkhebra-profile.pdf#page=58`}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="عرض وثائق الاعتماد (PDF، يفتح في تبويب جديد)"
+        href="/credentials"
       >
         عرض وثائق الاعتماد <ArrowUpLeft size={16} aria-hidden="true" />
-      </a>
+      </Link>
     </div>
   );
 }
