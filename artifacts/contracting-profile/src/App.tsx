@@ -1,4 +1,4 @@
-import { type MouseEvent, type ReactNode, useState } from 'react';
+import { type MouseEvent, type ReactNode, useRef, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
@@ -33,7 +33,7 @@ import {
 import heroImage from './assets/architecture-hero.jpg';
 import { projects } from './projects';
 import PanoramaViewer from './PanoramaViewer';
-import JeddahCityMap from './JeddahCityMap';
+import JeddahCityMap, { type JeddahCityMapHandle } from './JeddahCityMap';
 
 const queryClient = new QueryClient();
 
@@ -66,24 +66,13 @@ function BrandMark() {
 function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [, setLocation] = useLocation();
+  const cityMapRef = useRef<JeddahCityMapHandle>(null);
+  const projectNavigationPending = useRef(false);
 
   const closeMenu = () => setMenuOpen(false);
 
-  const enterProject = (
-    projectId: string,
-    event: MouseEvent<HTMLAnchorElement>,
-  ) => {
-    if (
-      event.button !== 0 ||
-      event.metaKey ||
-      event.ctrlKey ||
-      event.shiftKey ||
-      event.altKey
-    ) {
-      return;
-    }
-
-    event.preventDefault();
+  const navigateToProject = (projectId: string) => {
+    projectNavigationPending.current = false;
     const target = `/projects/${projectId}`;
     const reducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
@@ -162,6 +151,37 @@ function Home() {
       window.scrollTo({ top: 0, left: 0 });
       setLocation(target);
     }
+  };
+
+  const enterProject = (
+    projectId: string,
+    event: MouseEvent<HTMLAnchorElement>,
+  ) => {
+    if (
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    if (projectNavigationPending.current) return;
+
+    if (
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      !cityMapRef.current
+    ) {
+      navigateToProject(projectId);
+      return;
+    }
+
+    projectNavigationPending.current = true;
+    void cityMapRef.current
+      .flyToProject(projectId)
+      .then(() => navigateToProject(projectId), () => navigateToProject(projectId));
   };
 
   return (
@@ -352,7 +372,7 @@ function Home() {
               <p>مجسّم ثلاثي الأبعاد توضيحي لجدة؛ مواقع المشروعات تقريبية وليست عناوين فعلية.</p>
             </div>
             <div className="projects-map-layout">
-              <JeddahCityMap projects={projects} onSelect={enterProject} />
+              <JeddahCityMap ref={cityMapRef} projects={projects} onSelect={enterProject} />
               <div className="map-project-list" aria-label="مشاهد افتراضية">
                 {projects.map((project, index) => (
                   <a href={`/projects/${project.id}`} className="map-project-row" key={project.id} onClick={(event) => enterProject(project.id, event)} data-testid={`link-project-${project.id}`}>

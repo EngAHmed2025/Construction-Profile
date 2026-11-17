@@ -1,4 +1,11 @@
-import { useEffect, useRef, useState, type MouseEvent } from 'react';
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+  type MouseEvent,
+} from 'react';
 import * as THREE from 'three';
 import { RotateCcw, ZoomIn, ZoomOut } from 'lucide-react';
 import type { DemoProject } from './projects';
@@ -8,13 +15,23 @@ type JeddahCityMapProps = {
   onSelect: (projectId: string, event: MouseEvent<HTMLAnchorElement>) => void;
 };
 
+export type JeddahCityMapHandle = {
+  flyToProject: (projectId: string) => Promise<boolean>;
+};
+
 const arabicNumber = (value: number) =>
   String(value).replace(/[0-9]/g, (digit) => '٠١٢٣٤٥٦٧٨٩'[Number(digit)]);
 
-export default function JeddahCityMap({ projects, onSelect }: JeddahCityMapProps) {
+const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
+  function JeddahCityMap({ projects, onSelect }, ref) {
   const mountRef = useRef<HTMLDivElement>(null);
   const resetRef = useRef<(() => void) | null>(null);
+  const flyToRef = useRef<((projectId: string) => Promise<boolean>) | null>(null);
   const [webglUnavailable, setWebglUnavailable] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    flyToProject: (projectId) => flyToRef.current?.(projectId) ?? Promise.resolve(false),
+  }), []);
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -33,11 +50,24 @@ export default function JeddahCityMap({ projects, onSelect }: JeddahCityMapProps
     let pointerY = 0;
     let startYaw = 0;
     let startPitch = 0;
+    let flight: {
+      startedAt: number;
+      fromTarget: THREE.Vector3;
+      toTarget: THREE.Vector3;
+      fromYaw: number;
+      toYaw: number;
+      fromPitch: number;
+      toPitch: number;
+      fromDistance: number;
+      toDistance: number;
+      resolve: (completed: boolean) => void;
+    } | null = null;
     const scene = new THREE.Scene();
     scene.background = new THREE.Color('#e6e0d3');
     const camera = new THREE.PerspectiveCamera(39, 1, 0.1, 100);
     const target = new THREE.Vector3(0, 0, 0);
     const markerWorld: THREE.Vector3[] = [];
+    const projectTargets = new Map<string, THREE.Vector3>();
     const materials: THREE.Material[] = [];
     const geometries: THREE.BufferGeometry[] = [];
 
@@ -173,7 +203,9 @@ export default function JeddahCityMap({ projects, onSelect }: JeddahCityMapProps
       projects.forEach((project) => {
         const x = -8.1 + (project.mapPosition.x / 100) * 16.2;
         const z = -6 + (project.mapPosition.y / 100) * 12;
-        markerWorld.push(new THREE.Vector3(x, 0.45, z));
+        const projectTarget = new THREE.Vector3(x, 0.45, z);
+        markerWorld.push(projectTarget);
+        projectTargets.set(project.id, projectTarget);
         const halo = new THREE.Mesh(
           new THREE.CylinderGeometry(0.43, 0.43, 0.025, 32),
           material('#a2533c'),
@@ -227,15 +259,54 @@ export default function JeddahCityMap({ projects, onSelect }: JeddahCityMapProps
         updateCamera();
         placeMarkers();
       };
-      const render = () => {
+      const render = (timestamp: number) => {
         if (disposed) return;
         frameId = requestAnimationFrame(render);
+        if (flight) {
+          const progress = Math.min((timestamp - flight.startedAt) / 1750, 1);
+          const eased = progress * progress * (3 - 2 * progress);
+          target.copy(flight.fromTarget).lerp(flight.toTarget, eased);
+          target.y += Math.sin(progress * Math.PI) * 1.25;
+          yaw = flight.fromYaw + (flight.toYaw - flight.fromYaw) * eased;
+          pitch = flight.fromPitch + (flight.toPitch - flight.fromPitch) * eased;
+          distance = flight.fromDistance + (flight.toDistance - flight.fromDistance) * eased;
+          if (progress >= 1) {
+            target.copy(flight.toTarget);
+            const finishFlight = flight.resolve;
+            flight = null;
+            finishFlight(true);
+          }
+        }
         updateCamera();
         activeRenderer.render(scene, camera);
         placeMarkers();
       };
+      const flyToProject = (projectId: string) => {
+        const destination = projectTargets.get(projectId);
+        if (!destination || flight) return Promise.resolve(false);
+        return new Promise<boolean>((resolve) => {
+          const angleToProject = Math.atan2(destination.x - target.x, destination.z - target.z);
+          const yawDifference = Math.atan2(
+            Math.sin(angleToProject - yaw),
+            Math.cos(angleToProject - yaw),
+          );
+          flight = {
+            startedAt: performance.now(),
+            fromTarget: target.clone(),
+            toTarget: new THREE.Vector3(destination.x, 0.25, destination.z),
+            fromYaw: yaw,
+            toYaw: yaw + yawDifference * 0.18,
+            fromPitch: pitch,
+            toPitch: 0.48,
+            fromDistance: distance,
+            toDistance: 4.4,
+            resolve,
+          };
+          mount.parentElement?.classList.add('is-flying');
+        });
+      };
       const pointerDown = (event: PointerEvent) => {
-        if ((event.target as HTMLElement).closest('a,button')) return;
+        if (flight || (event.target as HTMLElement).closest('a,button')) return;
         dragging = true;
         pointerId = event.pointerId;
         pointerX = event.clientX;
@@ -257,14 +328,22 @@ export default function JeddahCityMap({ projects, onSelect }: JeddahCityMapProps
         mount.classList.remove('is-dragging');
       };
       const wheel = (event: WheelEvent) => {
+        if (flight) return;
         event.preventDefault();
         distance = THREE.MathUtils.clamp(distance + event.deltaY * 0.012, 14, 31);
       };
       const zoom = (event: Event) => {
+        if (flight) return;
         const amount = (event as CustomEvent<number>).detail;
         distance = THREE.MathUtils.clamp(distance + amount, 14, 31);
       };
-      const reset = () => { yaw = 0; pitch = 0.68; distance = 22; };
+      const reset = () => {
+        if (flight) return;
+        yaw = 0;
+        pitch = 0.68;
+        distance = 22;
+        target.set(0, 0, 0);
+      };
       mount.addEventListener('pointerdown', pointerDown, { signal: listeners.signal });
       mount.addEventListener('pointermove', pointerMove, { signal: listeners.signal });
       mount.addEventListener('pointerup', pointerUp, { signal: listeners.signal });
@@ -272,10 +351,11 @@ export default function JeddahCityMap({ projects, onSelect }: JeddahCityMapProps
       mount.addEventListener('wheel', wheel, { passive: false, signal: listeners.signal });
       mount.addEventListener('city-map-zoom', zoom, { signal: listeners.signal });
       resetRef.current = reset;
+      flyToRef.current = flyToProject;
       resize();
       resizeObserver = new ResizeObserver(resize);
       resizeObserver.observe(mount);
-      render();
+      frameId = requestAnimationFrame(render);
     } catch {
       renderer?.dispose();
       renderer?.domElement.remove();
@@ -295,6 +375,12 @@ export default function JeddahCityMap({ projects, onSelect }: JeddahCityMapProps
       geometries.forEach((geometry) => geometry.dispose());
       materials.forEach((entry) => entry.dispose());
       resetRef.current = null;
+      flyToRef.current = null;
+      mount.parentElement?.classList.remove('is-flying');
+      if (flight) {
+        flight.resolve(false);
+        flight = null;
+      }
     };
   }, [projects]);
 
@@ -370,4 +456,6 @@ export default function JeddahCityMap({ projects, onSelect }: JeddahCityMapProps
       <div className="city-map-disclaimer">تصوّر ثلاثي الأبعاد تقريبي لأغراض العرض — لا يمثل خريطة فعلية أو مواقع موثقة</div>
     </div>
   );
-}
+});
+
+export default JeddahCityMap;

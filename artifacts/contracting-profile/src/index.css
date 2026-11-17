@@ -585,6 +585,15 @@ html.project-entry-fallback .panorama-page {
 .static-city-name { position: absolute; top: 42%; left: 50%; color: #314b40; font-size: 20px; font-weight: 700; }
 .static-marker { display: flex; }
 .city-map-fallback-note { position: absolute; right: 12px; bottom: 12px; padding: 8px 10px; color: #f4f0e7; background: rgba(49, 75, 64, .86); font-size: 9px; }
+.city-map-frame.is-flying::after { position: absolute; z-index: 5; inset: 0; content: ""; pointer-events: none; background: radial-gradient(ellipse at center, transparent 28%, rgba(35, 43, 38, .16) 100%); animation: city-fly-vignette 1750ms cubic-bezier(.2, .75, .25, 1) both; }
+.city-map-frame.is-flying .city-map-hint { opacity: 0; transition: opacity .2s ease; }
+.city-map-frame.is-flying .city-map-tools { opacity: .45; pointer-events: none; }
+@keyframes city-fly-vignette {
+  0% { opacity: 0; }
+  18% { opacity: .15; }
+  76% { opacity: .9; }
+  100% { opacity: .25; }
+}
 @media (max-width: 767px) {
   .city-map-frame { min-height: 390px; }
   .city-map-jeddah { top: 39%; left: 45%; font-size: 17px; }
@@ -596,6 +605,7 @@ html.project-entry-fallback .panorama-page {
 }
 @media (prefers-reduced-motion: reduce) {
   .city-map-marker, .city-map-tools button { transition: none; }
+  .city-map-frame.is-flying::after { animation-duration: .01ms; }
 }
 
 @media (prefers-reduced-motion: reduce) {
