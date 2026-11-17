@@ -5,30 +5,12 @@ import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
 import {
-  ArrowDown,
-  ArrowLeft,
-  ArrowUpLeft,
-  BadgeCheck,
-  Building2,
-  Check,
-  ClipboardCheck,
-  Compass,
-  HardHat,
-  Layers3,
-  MapPin,
-  Menu,
-  Ruler,
-  ShieldCheck,
-  X,
+  ArrowDown, ArrowDownLeft, ArrowLeft, ArrowUpLeft, BadgeCheck, Check,
+  CircleDot, Droplets, HardHat, Layers3, MapPin, Menu,
+  MoveUpLeft, Route as RouteIcon, ShieldCheck, Signpost, X, Zap,
 } from 'lucide-react';
-import {
-  Route,
-  Switch,
-  useRoute,
-  useLocation,
-  Router as WouterRouter,
-} from 'wouter';
-import heroImage from './assets/architecture-hero.jpg';
+import { Route, Switch, useRoute, useLocation, Router as WouterRouter } from 'wouter';
+import logo from './assets/diyar-logo.png';
 import { projects } from './projects';
 import JeddahCityMap, { type JeddahCityMapHandle } from './JeddahCityMap';
 
@@ -36,25 +18,28 @@ const queryClient = new QueryClient();
 
 const navigation = [
   { label: 'الرئيسية', href: '#home' },
-  { label: 'مشروعات مختارة', href: '#projects' },
-  { label: 'من نحن', href: '#about' },
-  { label: 'خدماتنا', href: '#services' },
-  { label: 'منهجنا', href: '#approach' },
+  { label: 'المشروعات', href: '#projects' },
+  { label: 'عن ديار الخبرة', href: '#about' },
+  { label: 'نطاق الأعمال', href: '#services' },
+  { label: 'منهج التنفيذ', href: '#approach' },
 ];
 
-function BrandMark() {
+const services = [
+  { title: 'تهيئة الموقع والأعمال الترابية', text: 'تنظيف الموقع، التسوية، وأعمال الحفر والردم والقطع والإحلال ضمن نطاق المشروع.', icon: Layers3 },
+  { title: 'الطرق والفراغات العامة', text: 'تنفيذ الطرق والأرصفة والرصف، وعناصر تنظيم الحركة واللوحات المرورية.', icon: RouteIcon },
+  { title: 'شبكات المياه والصرف', text: 'شبكات المياه والصرف الصحي، وربط المياه وفق متطلبات الجهة المعنية ونطاق العمل.', icon: Droplets },
+  { title: 'شبكات الحريق وتصريف الأمطار', text: 'أعمال شبكات مكافحة الحريق وتصريف مياه الأمطار ضمن بنية الموقع التحتية.', icon: ShieldCheck },
+  { title: 'الكهرباء والإنارة', text: 'شبكات الجهد المنخفض والمتوسط والتوزيع، وإنارة الشوارع والمساحات الخارجية.', icon: Zap },
+  { title: 'تنسيق المواقع والري', text: 'أعمال التشجير والحدائق وشبكات الري، إلى جانب شبكات الهاتف.', icon: Signpost },
+];
+
+function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
-    <a href="#home" className="brand" aria-label="مدار للمقاولات — الصفحة الرئيسية" data-testid="link-brand-home">
-      <span className="brand-symbol" aria-hidden="true">
-        <svg viewBox="0 0 42 42" fill="none">
-          <path d="M6 32.5V10.8L21 4l15 6.8v21.7" stroke="currentColor" strokeWidth="1.7" />
-          <path d="M13 32.5V16l8-3.7 8 3.7v16.5M5 32.5h32M18 32.5V23h6v9.5" stroke="currentColor" strokeWidth="1.7" />
-          <path d="M21 4v8.3" stroke="currentColor" strokeWidth="1.7" />
-        </svg>
-      </span>
-      <span className="brand-copy">
-        <strong>مدار</strong>
-        <small>للمقاولات</small>
+    <a href="#home" className={`brand${compact ? ' brand-compact' : ''}`} aria-label="ديار الخبرة للمقاولات العامة — الرئيسية" data-testid="link-brand-home">
+      <span className="brand-logo-wrap"><img src={logo} alt="" /></span>
+      <span className="brand-copy" dir="rtl">
+        <strong>ديار الخبرة</strong>
+        <small>للمقاولات العامة</small>
       </span>
     </a>
   );
@@ -62,6 +47,7 @@ function BrandMark() {
 
 function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [inquiryCopied, setInquiryCopied] = useState(false);
   const [, setLocation] = useLocation();
   const [, projectParams] = useRoute('/projects/:id');
   const cityMapRef = useRef<JeddahCityMapHandle>(null);
@@ -69,417 +55,261 @@ function Home() {
   const activeProject = projects.find((project) => project.id === projectParams?.id) ?? null;
 
   useEffect(() => {
-    const sections = Array.from(
-      document.querySelectorAll<HTMLElement>('.site-shell main > section:not(.hero)'),
-    );
+    const sections = Array.from(document.querySelectorAll<HTMLElement>('.site-shell main > section:not(.hero)'));
     sections.forEach((section) => section.classList.add('section-reveal'));
-
     if (!('IntersectionObserver' in window)) {
       sections.forEach((section) => section.classList.add('is-in-view'));
       return;
     }
-
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('is-in-view');
-        observer.unobserve(entry.target);
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-in-view');
+          observer.unobserve(entry.target);
+        }
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
-
+    }, { threshold: 0.1, rootMargin: '0px 0px -5% 0px' });
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
-    if (!activeProject) return;
-    document.getElementById('projects')?.scrollIntoView({
+    if (activeProject) document.getElementById('projects')?.scrollIntoView({
       behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
       block: 'center',
     });
   }, [activeProject?.id]);
 
   const closeMenu = () => setMenuOpen(false);
-
   const navigateToProject = (projectId: string) => {
     projectNavigationPending.current = false;
     setLocation(`/projects/${projectId}`);
   };
-
   const closeProject = () => {
     projectNavigationPending.current = false;
     setLocation('/#projects');
-    window.setTimeout(() => {
-      document.getElementById('projects')?.scrollIntoView({
-        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
-        block: 'center',
-      });
-    }, 0);
+    window.setTimeout(() => document.getElementById('projects')?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+      block: 'center',
+    }), 0);
   };
-
-  const enterProject = (
-    projectId: string,
-    event: MouseEvent<HTMLAnchorElement>,
-  ) => {
-    if (
-      event.button !== 0 ||
-      event.metaKey ||
-      event.ctrlKey ||
-      event.shiftKey ||
-      event.altKey
-    ) {
-      return;
-    }
-
+  const enterProject = (projectId: string, event: MouseEvent<HTMLAnchorElement>) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
     if (projectNavigationPending.current) return;
-
-    if (
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-      !cityMapRef.current
-    ) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !cityMapRef.current) {
       navigateToProject(projectId);
       return;
     }
-
     projectNavigationPending.current = true;
-    void cityMapRef.current
-      .flyToProject(projectId)
+    void cityMapRef.current.flyToProject(projectId)
       .then(() => navigateToProject(projectId), () => navigateToProject(projectId));
   };
-
   if (projectParams && !activeProject) return <NotFound />;
 
   return (
-    <div className="site-shell grain" dir="rtl">
+    <div className="site-shell" dir="rtl">
       <header className="site-header">
         <div className="container-wide header-inner">
           <BrandMark />
-          <nav className={`main-nav ${menuOpen ? 'is-open' : ''}`} aria-label="التنقل الرئيسي">
-            {navigation.map((item) => (
-              <a
-                key={item.href}
-                className="nav-link"
-                href={item.href}
-                onClick={closeMenu}
-                data-testid={`link-nav-${item.href.slice(1)}`}
-              >
-                {item.label}
-              </a>
-            ))}
-            <a className="mobile-nav-cta" href="#contact" onClick={closeMenu} data-testid="link-mobile-contact">
-              تواصل معنا <ArrowLeft size={16} aria-hidden="true" />
-            </a>
+          <nav className={`main-nav${menuOpen ? ' is-open' : ''}`} aria-label="التنقل الرئيسي">
+            {navigation.map((item) => <a key={item.href} className="nav-link" href={item.href} onClick={closeMenu}>{item.label}</a>)}
           </nav>
-          <a href="#contact" className="header-cta" data-testid="link-header-contact">
-            <span>لنبدأ مشروعك</span>
-            <ArrowUpLeft size={16} aria-hidden="true" />
-          </a>
-          <button
-            type="button"
-            className="menu-toggle"
-            aria-label={menuOpen ? 'إغلاق قائمة التنقل' : 'فتح قائمة التنقل'}
-            aria-expanded={menuOpen}
-            aria-controls="mobile-navigation"
-            onClick={() => setMenuOpen((open) => !open)}
-            data-testid="button-menu-toggle"
-          >
-            {menuOpen ? <X size={23} /> : <Menu size={23} />}
+          <a href="#contact" className="header-cta">استفسر عن مشروع <ArrowUpLeft size={16} /></a>
+          <button type="button" className="menu-toggle" aria-label={menuOpen ? 'إغلاق القائمة' : 'فتح القائمة'} aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}>
+            {menuOpen ? <X size={21} /> : <Menu size={21} />}
           </button>
         </div>
-        <nav id="mobile-navigation" className={`mobile-nav ${menuOpen ? 'is-open' : ''}`} aria-label="قائمة الهاتف">
-          {navigation.map((item) => (
-            <a key={item.href} href={item.href} onClick={closeMenu} data-testid={`link-mobile-${item.href.slice(1)}`}>
-              {item.label}<ArrowLeft size={15} aria-hidden="true" />
-            </a>
-          ))}
-          <a href="#contact" onClick={closeMenu} data-testid="link-mobile-nav-contact">
-            تواصل معنا<ArrowLeft size={15} aria-hidden="true" />
-          </a>
+        <nav className={`mobile-nav${menuOpen ? ' is-open' : ''}`} aria-label="قائمة الهاتف">
+          {navigation.map((item) => <a key={item.href} href={item.href} onClick={closeMenu}>{item.label}<ArrowLeft size={15} /></a>)}
+          <a href="#contact" onClick={closeMenu}>تواصل للاستفسار<ArrowLeft size={15} /></a>
         </nav>
       </header>
 
       <main>
         <section className="hero" id="home" aria-labelledby="hero-title">
-          <div className="hero-image-wrap">
-            <img src={heroImage} alt="مبنى حديث قيد الإنشاء بواجهات حجرية وأعمدة واضحة" className="hero-image" />
+          <div className="hero-blueprint" aria-hidden="true">
+            <div className="blueprint-lines" /><span className="blueprint-road road-one" /><span className="blueprint-road road-two" />
+            <span className="blueprint-parcel parcel-one" /><span className="blueprint-parcel parcel-two" /><span className="blueprint-parcel parcel-three" />
+            <span className="blueprint-mark mark-one" /><span className="blueprint-mark mark-two" /><span className="blueprint-mark mark-three" />
           </div>
           <div className="hero-shade" />
+          <div className="hero-topline container-wide"><span className="hero-location"><MapPin size={14} /> جدة، المملكة العربية السعودية</span><span>مقاولات عامة · بنية تحتية</span></div>
           <div className="container-wide hero-content">
             <div className="hero-copy">
-              <p className="hero-kicker reveal"><span /> من الفكرة إلى المكان</p>
-              <h1 id="hero-title" className="reveal reveal-delay-1">
-                نبني ما<br />
-                <em>يدوم.</em>
-              </h1>
-              <p className="hero-description reveal reveal-delay-2">
-                مدار للمقاولات، شريكك في تحويل المخططات إلى واقع متقن؛
-                بعناية تبدأ من أول تفصيلة ولا تنتهي عند تسليم المفتاح.
-              </p>
-              <div className="hero-actions reveal reveal-delay-2">
-                <a href="#projects" className="button button-light" data-testid="link-hero-projects">
-                  اكتشف أعمالنا <ArrowLeft size={17} aria-hidden="true" />
-                </a>
-                <a href="#about" className="hero-text-link" data-testid="link-hero-about">
-                  تعرّف على مدار <ArrowDown size={15} aria-hidden="true" />
-                </a>
+              <p className="hero-kicker"><span /> خبرة ميدانية في أعمال البنية التحتية</p>
+              <h1 id="hero-title">نبني البنية<br /><em>التي تمضي بها الحياة.</em></h1>
+              <p className="hero-description">ديار الخبرة للمقاولات العامة. أعمال مواقع، طرق، وشبكات خدمات تُنفّذ بمنهج واضح من أول تجهيز الموقع إلى تفاصيله العامة.</p>
+              <div className="hero-actions">
+                <a href="#projects" className="button button-gold">تعرّف على مشروعاتنا <ArrowLeft size={17} /></a>
+                <a href="#services" className="hero-text-link">نطاق أعمالنا <ArrowDownLeft size={16} /></a>
               </div>
             </div>
-            <div className="hero-side-note" aria-hidden="true">
-              <span>مدار للمقاولات</span>
-              <span className="hero-side-line" />
-              <span>حيث تبدأ الحكاية</span>
-            </div>
-            <div className="hero-index" aria-hidden="true">
-              <span>٠١</span><span className="index-line" /><span>٠٦</span>
-            </div>
+            <div className="hero-brand-stamp"><img src={logo} alt="ديار الخبرة للمقاولات العامة" /><span>DIYAR ALKHEBRA<br />GENERAL CONTRACTING</span></div>
+            <div className="hero-coordinates" aria-hidden="true"><span>FIELD / INFRASTRUCTURE</span><span>JEDDAH · SAUDI ARABIA</span></div>
           </div>
-          <a href="#projects" className="scroll-cue" aria-label="انتقل إلى مشروعات مدار" data-testid="link-scroll-projects">
-            <span>استكشف مشروعاتنا</span><ArrowDown size={15} aria-hidden="true" />
-          </a>
+          <a href="#projects" className="scroll-cue"><span>انتقل إلى مشروعاتنا</span><ArrowDown size={15} /></a>
+        </section>
+
+        <section className="proof-band" aria-label="ملامح نطاق العمل">
+          <div className="container-wide proof-inner">
+            <p>نطاق متكامل<br /><strong>للموقع والبنية التحتية</strong></p>
+            <span className="proof-divider" />
+            <p><strong>أعمال ميدانية</strong><br />مرتبطة باحتياج كل مخطط</p>
+            <span className="proof-divider" />
+            <p><strong>جدة</strong><br />مشروعات ومخططات داخل المدينة</p>
+            <span className="proof-note">لا نعرض أرقاماً أو إنجازات غير موثّقة.</span>
+          </div>
         </section>
 
         <section className="projects-section" id="projects" aria-labelledby="projects-title">
           <div className="container-wide">
-            <div className="projects-heading">
-              <div>
-                <span className="eyebrow">مساحات لها معنى</span>
-                <h2 id="projects-title" className="section-title">أعمال تبدأ<br />بـ <span>رؤية واضحة.</span></h2>
-              </div>
-              <p>نماذج بصرية توضيحية لمشروعات مدار.<br />تُستبدل بصور وأعمال الشركة المعتمدة.</p>
+            <div className="section-heading projects-heading">
+              <div><span className="eyebrow">مشروعات مختارة · جدة</span><h2 id="projects-title">مساحات واسعة،<br /><span>وتفاصيل تحت الأرض.</span></h2></div>
+              <p>نماذج من نطاقات العمل الواردة في ملف الشركة. تظهر علامات الخريطة لتسهيل الاستكشاف فقط؛ ولا تمثل مواقع المشروع الفعلية.</p>
             </div>
             <div className="map-explainer">
-              <span className="map-city"><MapPin size={16} aria-hidden="true" /> مدينة جدة</span>
-              <p>مجسّم ثلاثي الأبعاد توضيحي لجدة؛ مواقع المشروعات تقريبية وليست عناوين فعلية.</p>
+              <span className="map-city"><MapPin size={16} /> جدة <i>— خريطة توضيحية</i></span>
+              <p>المواضع تقريبية وغير جغرافية، ولا تصلح للملاحة أو تحديد العناوين.</p>
             </div>
             <div className="projects-map-layout">
-              <JeddahCityMap
-                ref={cityMapRef}
-                projects={projects}
-                onSelect={enterProject}
-                activeProject={activeProject}
-                onCloseProject={closeProject}
-              />
-              <div className="map-project-list" aria-label="مشاهد افتراضية">
+              <JeddahCityMap ref={cityMapRef} projects={projects} onSelect={enterProject} activeProject={activeProject} onCloseProject={closeProject} />
+              <div className="map-project-list" aria-label="مشروعات الشركة">
                 {projects.map((project, index) => (
                   <a href={`/projects/${project.id}`} className="map-project-row" key={project.id} onClick={(event) => enterProject(project.id, event)} data-testid={`link-project-${project.id}`}>
                     <span className="map-project-index">٠{index + 1}</span>
                     <span className="map-project-copy">
-                      <span className="map-project-type">{project.type} <span>— {project.city}</span></span>
+                      <span className="map-project-type">{project.type}<span> · {project.city}</span></span>
                       <strong>{project.title}</strong>
                       <small>{project.shortDescription}</small>
+                      <small className="project-area">{project.area}</small>
                     </span>
-                    <ArrowUpLeft size={18} aria-hidden="true" />
+                    <ArrowUpLeft size={18} />
                   </a>
                 ))}
-                <p className="map-demo-note">جميع المشاهد والصور والنقاط هنا لأغراض العرض التجريبي فقط.</p>
+                <p className="map-demo-note">مشهد العرض البانورامي توضيحي عام، وليس تصويراً لمواقع مشروعات الشركة. نقاط الخريطة تقريبية.</p>
               </div>
             </div>
-            <div className="projects-endnote"><span /> اختر نقطة لاستكشاف مشهد بانورامي بزاوية ٣٦٠°.</div>
+            <div className="projects-endnote"><span /> اختر نقطة أو مشروعاً لفتح المشهد البانورامي التوضيحي.</div>
           </div>
         </section>
 
-        <section className="intro-section" id="about" aria-labelledby="about-title">
-          <div className="container-wide intro-grid">
-            <div className="intro-aside">
-              <span className="eyebrow">مدار في سطور</span>
-              <div className="intro-stamp" aria-hidden="true">
-                <span>فكرة</span><span className="stamp-line" /><span>مكان</span>
-              </div>
+        <section className="about-section" id="about">
+          <div className="container-wide about-grid">
+            <div className="about-index"><span className="eyebrow">من نحن</span><strong>ديار<br />الخبرة</strong><i>مقاولات عامة</i></div>
+            <div className="about-main">
+              <p className="eyebrow">شركة مقاولات عامة · جدة</p>
+              <h2>نعمل حيث تبدأ<br /><span>البنية التحتية.</span></h2>
+              <p className="about-lead">ديار الخبرة للمقاولات العامة شركة تعمل في تنفيذ أعمال البنية التحتية وتطوير المواقع. يجمع نطاقها بين الأعمال الترابية والطرق وشبكات المرافق، وصولاً إلى الإنارة وتنسيق المواقع.</p>
+              <p className="about-copy">تتطلب مشروعات التطوير تنسيقاً دقيقاً بين عناصر متعددة داخل موقع واحد. لذلك نعرض نطاقاتنا كما هي: أعمال مترابطة تبدأ من تهيئة الأرض وتستمر عبر خدمات الموقع وشبكاته.</p>
             </div>
-            <div className="intro-main">
-              <h2 id="about-title" className="section-title">
-                نبني بعقلٍ<br />يرى <span>ما وراء المخطط.</span>
-              </h2>
-              <div className="intro-bottom">
-                <p>
-                  في مدار، نؤمن أن البناء الجيد يبدأ بالإنصات. نفهم احتياج كل عميل،
-                  ونوازن بين الرؤية والواقع، ثم نمضي بخطوات مدروسة نحو مساحة تعمل
-                  كما ينبغي وتبقى جميلة مع الزمن.
-                </p>
-                <a href="#approach" className="underlined-link" data-testid="link-about-approach">
-                  كيف نعمل <ArrowLeft size={16} aria-hidden="true" />
-                </a>
-              </div>
-            </div>
-            <div className="intro-note">
-              <span className="note-number">مـ / ٠١</span>
-              <p>شريك مسؤول<br />في كل مرحلة.</p>
-              <span className="note-rule" />
-            </div>
+            <div className="about-side-note"><span>01 / COMPANY PROFILE</span><p>عملٌ يبدأ من الأرض<br />ويخدم المكان كله.</p><MoveUpLeft size={25} /></div>
           </div>
         </section>
 
         <section className="services-section" id="services" aria-labelledby="services-title">
           <div className="container-wide">
-            <div className="section-heading-row">
-              <div>
-                <span className="eyebrow">ما نتقنه</span>
-                <h2 id="services-title" className="section-title">حلول متكاملة،<br /><span>من أول خط.</span></h2>
-              </div>
-              <p className="section-intro">
-                خدمات مترابطة تمنح المشروع مساراً واضحاً؛ من دراسة الاحتياج حتى أدق
-                أعمال التنفيذ والتشطيب.
-              </p>
+            <div className="section-heading services-heading">
+              <div><span className="eyebrow">نطاق الأعمال</span><h2 id="services-title">خدمات مترابطة.<br /><span>موقع يعمل كما خُطّط له.</span></h2></div>
+              <p>تتحدد تفاصيل التنفيذ وفق مستندات المشروع ومتطلباته والجهات المعنية.</p>
             </div>
-            <div className="services-list">
-              <article className="service-row" data-testid="service-construction">
-                <span className="service-number">٠١</span>
-                <span className="service-icon"><Building2 size={25} strokeWidth={1.5} /></span>
-                <div className="service-copy">
-                  <h3>تنفيذ المباني</h3>
-                  <p>أعمال إنشائية ومعمارية للمشروعات السكنية والتجارية، بتنسيق دقيق بين الفرق والمراحل.</p>
-                </div>
-                <a href="#contact" aria-label="استفسر عن تنفيذ المباني" className="service-arrow" data-testid="link-service-construction"><ArrowUpLeft size={19} /></a>
-              </article>
-              <article className="service-row" data-testid="service-fitout">
-                <span className="service-number">٠٢</span>
-                <span className="service-icon"><Ruler size={25} strokeWidth={1.5} /></span>
-                <div className="service-copy">
-                  <h3>التشطيبات الداخلية</h3>
-                  <p>اختيار المواد، ضبط التفاصيل، وتنفيذ المساحات بما يترجم الرؤية إلى تجربة يومية.</p>
-                </div>
-                <a href="#contact" aria-label="استفسر عن التشطيبات الداخلية" className="service-arrow" data-testid="link-service-fitout"><ArrowUpLeft size={19} /></a>
-              </article>
-              <article className="service-row" data-testid="service-management">
-                <span className="service-number">٠٣</span>
-                <span className="service-icon"><ClipboardCheck size={25} strokeWidth={1.5} /></span>
-                <div className="service-copy">
-                  <h3>إدارة المشروع</h3>
-                  <p>تنظيم النطاق والجدول والتنسيق بين الأطراف، مع متابعة واضحة في كل نقطة تسليم.</p>
-                </div>
-                <a href="#contact" aria-label="استفسر عن إدارة المشروع" className="service-arrow" data-testid="link-service-management"><ArrowUpLeft size={19} /></a>
-              </article>
-              <article className="service-row" data-testid="service-renovation">
-                <span className="service-number">٠٤</span>
-                <span className="service-icon"><Layers3 size={25} strokeWidth={1.5} /></span>
-                <div className="service-copy">
-                  <h3>التجديد وإعادة التأهيل</h3>
-                  <p>تطوير المباني القائمة بعناية، واحترام ما فيها من قيمة، وإعدادها لاحتياجات جديدة.</p>
-                </div>
-                <a href="#contact" aria-label="استفسر عن التجديد وإعادة التأهيل" className="service-arrow" data-testid="link-service-renovation"><ArrowUpLeft size={19} /></a>
-              </article>
+            <div className="services-grid">
+              {services.map((service, index) => {
+                const Icon = service.icon;
+                return <article className="service-card" key={service.title}>
+                  <div className="service-top"><span>٠{index + 1}</span><Icon size={23} strokeWidth={1.45} /></div>
+                  <h3>{service.title}</h3><p>{service.text}</p>
+                  <a href="#contact" aria-label={`استفسر عن ${service.title}`}><ArrowUpLeft size={17} /></a>
+                </article>;
+              })}
             </div>
-            <p className="service-footnote">تُحدّد نطاقات الخدمات النهائية وفق احتياج المشروع واتفاق الطرفين.</p>
+            <div className="service-note"><CircleDot size={15} /><span>كما يشمل نطاق الشركة شبكات الهاتف وأعمال المرافق المرتبطة بالموقع.</span></div>
+          </div>
+        </section>
+
+        <section className="featured-project" aria-labelledby="featured-title">
+          <div className="featured-grid-lines" aria-hidden="true" />
+          <div className="container-wide featured-inner">
+            <div className="featured-label"><span>01</span><span>PROJECT FILE</span></div>
+            <div className="featured-content">
+              <span className="eyebrow">مثال على تنوع نطاق الأعمال</span>
+              <h2 id="featured-title">منصة لمرافق<br /><em>تخدم مخططاً كاملاً.</em></h2>
+              <p>في مشروع أبْحر هيلز، يجتمع نطاق البنية التحتية مع الطرق والفراغات العامة. مساحة المخطط وفق ملف الشركة 392,087.60 م²، والمشروع مُدرج تحت التطوير.</p>
+              <a href="/projects/abhur-hills" onClick={(event) => enterProject('abhur-hills', event)} className="featured-link">استكشف تفاصيل المشروع <ArrowLeft size={16} /></a>
+            </div>
+            <div className="featured-spec">
+              <span>مخطط أبحر هيلز</span><strong>392,087.60</strong><small>متر مربع · مساحة المخطط</small>
+              <i /><span className="status-pill"><span /> تحت التطوير</span>
+            </div>
           </div>
         </section>
 
         <section className="approach-section" id="approach" aria-labelledby="approach-title">
           <div className="container-wide approach-grid">
-            <div className="approach-visual">
-              <div className="approach-image">
-                <img src={heroImage} alt="تفاصيل واجهة حجرية وأعمدة في موقع بناء" />
-                <div className="visual-label"><span>من الموقع</span><span>تفاصيل تصنع الفرق</span></div>
-              </div>
-              <div className="approach-stamp" aria-hidden="true"><Compass size={28} strokeWidth={1.25} /><span>على<br />مسارٍ واضح</span></div>
+            <div className="approach-heading">
+              <span className="eyebrow">منهج التنفيذ</span>
+              <h2 id="approach-title">التفاصيل لا تعمل<br /><span>منفصلة عن بعضها.</span></h2>
+              <p>تنفيذ أعمال الموقع يتطلب وضوح النطاق وتتابعاً عملياً بين المراحل وتنسيقاً مستمراً بين عناصر البنية التحتية.</p>
+              <div className="approach-seal"><HardHat size={26} /><span>عمل ميداني<br />بتنسيق مسؤول</span></div>
             </div>
-            <div className="approach-content">
-              <span className="eyebrow">طريقتنا في العمل</span>
-              <h2 id="approach-title" className="section-title">ثقة تُبنى<br /><span>خطوة بخطوة.</span></h2>
-              <p className="approach-lead">لا نختصر الطريق على حساب النتيجة. نعمل بإيقاع منظم، ونبقي الصورة واضحة أمامك من البداية وحتى التسليم.</p>
-              <div className="principles">
-                <div className="principle">
-                  <span className="principle-icon"><HardHat size={20} strokeWidth={1.5} /></span>
-                  <div><h3>سلامة قبل كل شيء</h3><p>ممارسات عمل مسؤولة واهتمام بموقع آمن ومنظم.</p></div>
-                  <Check size={17} className="principle-check" aria-hidden="true" />
-                </div>
-                <div className="principle">
-                  <span className="principle-icon"><BadgeCheck size={20} strokeWidth={1.5} /></span>
-                  <div><h3>جودة يمكن ملاحظتها</h3><p>مراجعة الأعمال والتفاصيل وفق النطاق المتفق عليه.</p></div>
-                  <Check size={17} className="principle-check" aria-hidden="true" />
-                </div>
-                <div className="principle">
-                  <span className="principle-icon"><ShieldCheck size={20} strokeWidth={1.5} /></span>
-                  <div><h3>وضوح في التواصل</h3><p>تحديثات منتظمة وقرارات موثقة طوال رحلة المشروع.</p></div>
-                  <Check size={17} className="principle-check" aria-hidden="true" />
-                </div>
-              </div>
+            <div className="approach-steps">
+              <article><span>١</span><div><h3>قراءة الموقع والنطاق</h3><p>مراجعة متطلبات المشروع ومستنداته وحدود الأعمال ذات الصلة.</p></div><Check size={17} /></article>
+              <article><span>٢</span><div><h3>تتابع الأعمال</h3><p>تنظيم أعمال التهيئة والشبكات والطرق بما يدعم الترابط بين مكونات الموقع.</p></div><Check size={17} /></article>
+              <article><span>٣</span><div><h3>تنسيق التنفيذ</h3><p>متابعة الأعمال الميدانية والتنسيق بين تخصصات المرافق ضمن نطاق المشروع.</p></div><Check size={17} /></article>
+              <article><span>٤</span><div><h3>مراجعة النطاق</h3><p>التحقق من الأعمال المنفذة وفق المتطلبات والمستندات المعتمدة للمشروع.</p></div><Check size={17} /></article>
             </div>
           </div>
         </section>
 
-        <section className="process-section" aria-labelledby="process-title">
-          <div className="container-wide">
-            <div className="process-head">
-              <span className="eyebrow">رحلة المشروع</span>
-              <h2 id="process-title" className="section-title">من أول سؤال<br />إلى <span>آخر تفصيلة.</span></h2>
-              <p>خطوات عملية تمنح كل طرف فهماً مشتركاً لما سيحدث تالياً.</p>
-            </div>
-            <div className="process-steps">
-              <article className="process-step">
-                <span className="step-index">المرحلة ٠١</span><span className="step-line" />
-                <h3>نستمع ونفهم</h3><p>نجمع احتياجاتك، نراجع الموقع والمخططات، ونحدد ما يهم المشروع فعلاً.</p>
-              </article>
-              <article className="process-step">
-                <span className="step-index">المرحلة ٠٢</span><span className="step-line" />
-                <h3>نخطط ونتفق</h3><p>نوضح نطاق العمل والمراحل والتوقعات قبل أن تبدأ أعمال التنفيذ.</p>
-              </article>
-              <article className="process-step">
-                <span className="step-index">المرحلة ٠٣</span><span className="step-line" />
-                <h3>ننفذ ونتابع</h3><p>ننسق الفرق، نراجع جودة الأعمال، ونبقيك على اطلاع بتقدم المشروع.</p>
-              </article>
-              <article className="process-step">
-                <span className="step-index">المرحلة ٠٤</span><span className="step-line" />
-                <h3>نراجع ونسلّم</h3><p>نتحقق من التفاصيل، نعالج الملاحظات، ونسلّم وفق ما تم الاتفاق عليه.</p>
-              </article>
-            </div>
+        <section className="credentials-section">
+          <div className="container-wide credentials-inner">
+            <BadgeCheck size={27} strokeWidth={1.3} />
+            <div><span className="eyebrow">من ملف الشركة</span><h2>معلومات المشاريع كما وردت.</h2></div>
+            <p>نحافظ على وصف دقيق للحالة والمساحة ونطاق العمل. لا تُعرض المشروعات على أنها مكتملة ما لم يرد ذلك صراحةً في المصدر.</p>
           </div>
         </section>
 
         <section className="contact-section" id="contact" aria-labelledby="contact-title">
-          <div className="contact-ornament" aria-hidden="true"><span /><span /><span /></div>
+          <div className="contact-pattern" aria-hidden="true" />
           <div className="container-wide contact-grid">
-            <div className="contact-copy">
-              <span className="eyebrow">خطوتك الأولى</span>
-              <h2 id="contact-title">عندك فكرة؟<br /><em>لنبنِها معاً.</em></h2>
-              <p>أخبرنا عن مشروعك، وسنبدأ بحوار واضح حول احتياجك والخطوة المناسبة التالية.</p>
-              <a href="#contact-details" className="button button-light contact-button" data-testid="link-contact-details">
-                تفاصيل التواصل <ArrowLeft size={17} aria-hidden="true" />
-              </a>
-            </div>
-            <div className="contact-details" id="contact-details">
-              <div className="contact-detail">
-                <span className="detail-index">أ</span>
-                <div><span className="detail-label">المقر</span><p>يُضاف عنوان المقر المعتمد هنا</p></div>
-              </div>
-              <div className="contact-detail">
-                <span className="detail-index">ب</span>
-                <div><span className="detail-label">الهاتف</span><p>يُضاف رقم التواصل المعتمد هنا</p></div>
-              </div>
-              <div className="contact-detail">
-                <span className="detail-index">ج</span>
-                <div><span className="detail-label">البريد الإلكتروني</span><p>يُضاف البريد الرسمي هنا</p></div>
-              </div>
-              <p className="contact-replace-note">تُستكمل بيانات التواصل بعد اعتماد معلومات الشركة.</p>
+            <div className="contact-copy"><span className="eyebrow">خطوة الاستفسار الأولى</span><h2 id="contact-title">لديك مشروع؟<br /><em>لنبدأ من نطاقه.</em></h2><p>أرسل نبذة عن المشروع ونطاق الأعمال المطلوب، وسيتضح مسار التواصل المناسب. لا تتوفر بيانات هاتف أو بريد منشورة في هذه الصفحة.</p></div>
+            <div className="contact-panel">
+              <span className="contact-number">01 — INQUIRY</span>
+              <h3>استفسار عام</h3>
+              <p>للاستفسارات المتعلقة بمشروعات البنية التحتية والمقاولات العامة.</p>
+              <button type="button" className="inquiry-link" onClick={() => {
+                const request = 'السلام عليكم، أرغب بالاستفسار عن مشروع مقاولات عامة / بنية تحتية. نبذة المشروع: ';
+                if (navigator.clipboard?.writeText) {
+                  void navigator.clipboard.writeText(request).then(() => setInquiryCopied(true), () => setInquiryCopied(false));
+                } else {
+                  const field = document.createElement('textarea');
+                  field.value = request;
+                  field.setAttribute('readonly', '');
+                  field.style.position = 'fixed';
+                  field.style.opacity = '0';
+                  document.body.appendChild(field);
+                  field.select();
+                  setInquiryCopied(document.execCommand('copy'));
+                  field.remove();
+                }
+              }} aria-label="نسخ صيغة استفسار عام">
+                {inquiryCopied ? 'نُسخت صيغة الاستفسار — أرسلها عبر قناة الشركة المعتمدة' : 'انسخ صيغة استفسار عام'} <ArrowLeft size={17} />
+              </button>
+              <small>بيانات التواصل المباشرة غير منشورة هنا. الصيغة المنسوخة لا تُرسل تلقائياً؛ أرسلها إلى الشركة عبر قناتها المعتمدة.</small>
             </div>
           </div>
-          <div className="contact-bottom container-wide">
-            <span>مدار للمقاولات</span><span className="contact-bottom-line" /><span>نحو بناءٍ يدوم</span>
-          </div>
+          <div className="container-wide contact-bottom"><span>ديار الخبرة للمقاولات العامة</span><i /><span>DIYAR ALKHEBRA GENERAL CONTRACTING</span></div>
         </section>
       </main>
-
       <footer className="site-footer">
-        <div className="container-wide footer-inner">
-          <BrandMark />
-          <p>مدار للمقاولات <span>—</span> صفحة تعريفية قابلة للتخصيص</p>
-          <a href="#home" className="back-top" data-testid="link-back-top">إلى الأعلى <ArrowUpLeft size={16} aria-hidden="true" /></a>
-        </div>
+        <div className="container-wide footer-inner"><BrandMark compact /><p>أعمال بنية تحتية ومقاولات عامة · جدة</p><a href="#home" className="back-top">العودة للأعلى <ArrowUpLeft size={15} /></a></div>
       </footer>
     </div>
   );
 }
 
 function Router() {
-  return (
-    <RoutedErrorBoundary>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/projects/:id" component={Home} />
-        <Route component={NotFound} />
-      </Switch>
-    </RoutedErrorBoundary>
-  );
+  return <RoutedErrorBoundary><Switch><Route path="/" component={Home} /><Route path="/projects/:id" component={Home} /><Route component={NotFound} /></Switch></RoutedErrorBoundary>;
 }
 
 function RoutedErrorBoundary({ children }: { children: ReactNode }) {
@@ -488,16 +318,7 @@ function RoutedErrorBoundary({ children }: { children: ReactNode }) {
 }
 
 function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-          <Router />
-        </WouterRouter>
-        <Toaster />
-      </TooltipProvider>
-    </QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}><TooltipProvider><WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}><Router /></WouterRouter><Toaster /></TooltipProvider></QueryClientProvider>;
 }
 
 export default App;

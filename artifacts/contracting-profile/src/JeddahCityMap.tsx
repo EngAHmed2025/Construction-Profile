@@ -8,13 +8,13 @@ import {
 } from 'react';
 import * as THREE from 'three';
 import { ArrowRight, RotateCcw, X, ZoomIn, ZoomOut } from 'lucide-react';
-import type { DemoProject } from './projects';
+import type { CompanyProject } from './projects';
 import PanoramaViewer from './PanoramaViewer';
 
 type JeddahCityMapProps = {
-  projects: DemoProject[];
+  projects: CompanyProject[];
   onSelect: (projectId: string, event: MouseEvent<HTMLAnchorElement>) => void;
-  activeProject: DemoProject | null;
+  activeProject: CompanyProject | null;
   onCloseProject: () => void;
 };
 
@@ -487,7 +487,7 @@ const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
             </button>
           </div>
           <div className="city-project-caption">
-            <span>مشهد بانورامي تجريبي — صورة توضيحية وليست صورة لموقع فعلي</span>
+            <span>رسم بانورامي توضيحي عام — لا يصوّر المشروع</span>
             <p>{activeProject.shortDescription}</p>
           </div>
         </section>
