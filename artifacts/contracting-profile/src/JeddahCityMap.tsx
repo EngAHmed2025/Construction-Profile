@@ -401,6 +401,7 @@ const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
         href={`/projects/${project.id}`}
         className="city-map-marker"
         data-city-marker={index}
+        style={{ animationDelay: `${index * 140}ms` }}
         aria-label={`استكشاف المشهد: ${project.title}`}
         onClick={(event) => onSelect(project.id, event)}
         data-testid={`link-map-pin-${project.id}`}
@@ -441,7 +442,8 @@ const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
               key={project.id}
               href={`/projects/${project.id}`}
               className="city-map-marker static-marker is-visible"
-              style={{ left: `${project.mapPosition.x}%`, top: `${project.mapPosition.y}%` }}
+              data-city-marker={index}
+              style={{ left: `${project.mapPosition.x}%`, top: `${project.mapPosition.y}%`, animationDelay: `${index * 140}ms` }}
               aria-label={`استكشاف المشهد: ${project.title}`}
               onClick={(event) => onSelect(project.id, event)}
               data-testid={`link-map-pin-${project.id}`}
