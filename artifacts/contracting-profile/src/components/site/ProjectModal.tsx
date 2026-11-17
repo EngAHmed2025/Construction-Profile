@@ -83,7 +83,6 @@ export default function ProjectModal({ project, onClose, onInquire }: Props) {
                 <button type="button" className="site-action site-action-gold pm-cta" onClick={inquire} data-testid="button-inquire-similar">
                   {whatsappUrl() ? <WhatsAppIcon size={18} /> : <ArrowLeft size={17} />} استفسر عن مشروع مشابه
                 </button>
-                <p className="pm-source">المصدر: ملف الشركة التعريفي، صفحة <bdi>{project.sourcePages}</bdi></p>
               </div>
             </>
           )}

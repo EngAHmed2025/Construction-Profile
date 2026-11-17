@@ -1,0 +1,30 @@
+.return-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: radial-gradient(ellipse at 50% 40%, #365347, #223a31 72%);
+  color: #f5e4b9;
+}
+.return-loader-content { width: min(100%, 35rem); text-align: center; }
+.return-loader-name {
+  display: block;
+  width: clamp(150px, 48vw, 230px);
+  height: auto;
+  margin-inline: auto;
+}
+.return-loader-pen {
+  stroke-dasharray: 1 2;
+  stroke-dashoffset: 1;
+  animation: brand-write var(--pen-duration) ease-out var(--pen-delay) both;
+}
+.return-loader-caption { display: block; margin-top: 10px; font-size: clamp(.9rem, 2.5vw, 1.1rem); }
+.return-loader-line { display: block; margin: 18px auto 0; width: min(42%, 130px); height: 1px; background: #dfbf73; transform-origin: right; animation: brand-line var(--brand-reveal-time) ease-out both; }
+@keyframes brand-write { from { stroke-dashoffset: 1; opacity: 0; } 5% { opacity: 1; } to { stroke-dashoffset: 0; opacity: 1; } }
+@keyframes brand-line { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .return-loader-pen, .return-loader-line { animation: none; }
+  .return-loader-pen { stroke-dashoffset: 0; }
+}

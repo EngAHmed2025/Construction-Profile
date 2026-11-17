@@ -28,3 +28,241 @@ mtime_ms = 1794949780458
 storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/529cf09a-b953-40e4-ad5c-5945ea30b4e4/757777b5-d5fe-4e1b-ba09-612150318879"
 storage_version_token = "1794949795641909"
 content_type = "application/pdf"
+
+[[outputs]]
+id = "kGHLlhpzVkd3NQ0jjYXot"
+uri = "file://generated-artifacts/jeddah-map-desktop.png"
+type = "image"
+title = "Jeddah project map — desktop"
+description = "Desktop screenshot, 1440 × 900."
+logical_id = "aec83e1f-dad9-4f37-b5a5-c0e4947118c2"
+content_hash = "sha256:db0c50de51db64e5d58421f765381c8d1997c960088b7f84afd11312215c46e1"
+size = 358236
+mtime_ms = 1794950209107
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/aec83e1f-dad9-4f37-b5a5-c0e4947118c2/80256a00-09dc-473d-9aa3-07ca8fb8efd3"
+storage_version_token = "1794950262339090"
+content_type = "image/png"
+
+[[outputs]]
+id = "thjDPgIBw-Rfo5NW3T37M"
+uri = "file://generated-artifacts/jeddah-map-mobile-390.png"
+type = "image"
+title = "Jeddah project map — 390px mobile"
+description = "Mobile screenshot, 390 × 844."
+logical_id = "51ef73a8-9fb6-4d25-b66f-59392f6df576"
+content_hash = "sha256:d5c8f891c2f6cc6468b4597a709580f57c9b26183680053d365eec8a157a8ce1"
+size = 166834
+mtime_ms = 1794950215315
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/51ef73a8-9fb6-4d25-b66f-59392f6df576/09580c2d-6e35-41a3-9d50-844477328579"
+storage_version_token = "1794950262962365"
+content_type = "image/png"
+
+[[outputs]]
+id = "TZtkFBEZWR8mmfnaxtVg2"
+uri = "file://generated-artifacts/jeddah-live-1440.png"
+type = "image"
+title = "Google 3D map of Jeddah — desktop"
+description = "Live map with three verified markers and the district list, 1440 × 900."
+logical_id = "343fbb52-d504-4849-95c1-fee409720ac1"
+content_hash = "sha256:74ba4dc03641ae719a0402382f9ad1bb3112c14cd16572602eb1363c59b9fe09"
+size = 1105503
+mtime_ms = 1794951155650
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/343fbb52-d504-4849-95c1-fee409720ac1/11e7ed2e-49be-4474-a69d-154b14f2a7d4"
+storage_version_token = "1794951196292366"
+content_type = "image/png"
+
+[[outputs]]
+id = "JmMJuUfawyIq1Vpl3JjDZ"
+uri = "file://generated-artifacts/jeddah-landscape-1440.png"
+type = "image"
+title = "الخريطة الأفقية — الكمبيوتر"
+description = "عرض الخريطة بنسبة 16:9 على الكمبيوتر."
+logical_id = "55263815-69c2-4e2b-8372-3eb915ded511"
+content_hash = "sha256:fba8ed5a2f30c1dd1f1e27f4e4ec88f35341828e8cc3d6f0eb6efa7ecf5108da"
+size = 959873
+mtime_ms = 1794951770052
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/55263815-69c2-4e2b-8372-3eb915ded511/b978819a-3898-4a42-b082-d17fba82e73c"
+storage_version_token = "1794951812534918"
+content_type = "image/png"
+
+[[outputs]]
+id = "1ZTUWTCXRQJqWjphm4Fg1"
+uri = "file://generated-artifacts/jeddah-live-390.png"
+type = "image"
+title = "Google 3D map of Jeddah — 390 px mobile"
+description = "Live map after tapping تحميل الخريطة, 390 × 844."
+logical_id = "dd5c7536-2599-455b-8902-e39ee66a8db9"
+content_hash = "sha256:997d6b48cdb0d2f6fff409c7366bc5ae642ac75b8b57def52c29bed34c0944d1"
+size = 397372
+mtime_ms = 1794951167270
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/dd5c7536-2599-455b-8902-e39ee66a8db9/44906084-2b36-42f0-8e68-5f88663023dc"
+storage_version_token = "1794951196789463"
+content_type = "image/png"
+
+[[outputs]]
+id = "HTWcNgz4so7WMLO5MO7CR"
+uri = "file://generated-artifacts/jeddah-landscape-390.png"
+type = "image"
+title = "الخريطة الأفقية — موبايل 390 بكسل"
+description = "عرض أفقي مع العلامات الثلاث المرقّمة على الموبايل."
+logical_id = "82bdd67c-8b59-47f0-b79a-d184b9b4274b"
+content_hash = "sha256:4f33b6f396b16ad9339d2f0d05b123ebb03b8e32e5eb354aaa8c264d0f9d42b1"
+size = 193103
+mtime_ms = 1794951801499
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/82bdd67c-8b59-47f0-b79a-d184b9b4274b/417adee2-4107-4887-ac09-617581864a6d"
+storage_version_token = "1794951813021872"
+content_type = "image/png"
+
+[[outputs]]
+id = "rW3N2vc_Xx4V-Hjv37ZOo"
+uri = "file://generated-artifacts/jeddah-ui-1440.png"
+type = "image"
+title = "واجهة الخريطة — الكمبيوتر"
+description = "الخريطة الأفقية وقائمة الأحياء بجانبها."
+logical_id = "f96dc40b-e8a5-4b47-bb14-0bd1d54e1f95"
+content_hash = "sha256:5cfda92c0704671e0cbb1b0e8d782ea2906bf38bf174f6b4c54d8e6ded75134f"
+size = 951350
+mtime_ms = 1794951921158
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/f96dc40b-e8a5-4b47-bb14-0bd1d54e1f95/a25f80a5-4225-4ba9-82ca-c8932e6aa692"
+storage_version_token = "1794951937272258"
+content_type = "image/png"
+
+[[outputs]]
+id = "Q-W5NxtuWnv6OShZHVW1U"
+uri = "file://generated-artifacts/jeddah-ui-390.png"
+type = "image"
+title = "واجهة الخريطة — الموبايل"
+description = "العرض الجديد بعرض 390 بكسل."
+logical_id = "3d94760b-2d7e-4397-a358-970c4176da86"
+content_hash = "sha256:44de97428b1b040d9ed5ed6baff333dc5e07162c5f40ff850638c1284010e3f5"
+size = 185393
+mtime_ms = 1794951925330
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/3d94760b-2d7e-4397-a358-970c4176da86/8e466590-9822-41ca-b98f-e243244e208d"
+storage_version_token = "1794951937767507"
+content_type = "image/png"
+
+[[outputs]]
+id = "M3VLdYlhHN6t7eLoeMvGz"
+uri = "file://generated-artifacts/diyar-services-1440.png"
+type = "image"
+title = "كروت الخدمات — الكمبيوتر"
+description = "الكروت الستة بالتصميم الجديد."
+logical_id = "5efb7f50-a106-4efb-9105-d2d47c76188a"
+content_hash = "sha256:6aa55e22e6dc4fd2371c019f7bb7c952df51f00f169ebe56207dd7d360f55ba8"
+size = 163410
+mtime_ms = 1794952246078
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/5efb7f50-a106-4efb-9105-d2d47c76188a/47039951-ecc0-4e26-8794-8e68ca66ea8c"
+storage_version_token = "1794952263525189"
+content_type = "image/png"
+
+[[outputs]]
+id = "55KrZKcSDcZVt-JRta7w3"
+uri = "file://generated-artifacts/diyar-services-390.png"
+type = "image"
+title = "كروت الخدمات — الموبايل"
+description = "عرض الكروت على شاشة 390 بكسل."
+logical_id = "b8a85c60-c19e-4f36-b509-4126ae8dff4f"
+content_hash = "sha256:506d3c224dd223c22ff0c613591f893a56f9199dd263abf70bd558a3d50aedc2"
+size = 70289
+mtime_ms = 1794952247126
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/b8a85c60-c19e-4f36-b509-4126ae8dff4f/b3be21d4-48b6-40dd-b06e-a4ec18a59fe2"
+storage_version_token = "1794952264126512"
+content_type = "image/png"
+
+[[outputs]]
+id = "EG9Qyzo3WKmY-J_MNohJY"
+uri = "file://generated-artifacts/diyar-contact-1440.png"
+type = "image"
+title = "تواصل معنا — الكمبيوتر"
+description = "كروت التواصل الجديدة بجانب نموذج الاستفسار."
+logical_id = "c536e64b-4a13-465e-80ff-82bc111bb047"
+content_hash = "sha256:b7996e78a8c4b83b5300afa1d383fc52c9d26537080b432e99a1b73faf17545d"
+size = 226387
+mtime_ms = 1794952348878
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/c536e64b-4a13-465e-80ff-82bc111bb047/b1f85097-13b4-405a-8cfd-6f29792dba3f"
+storage_version_token = "1794952362431329"
+content_type = "image/png"
+
+[[outputs]]
+id = "4X5TxrNR2pnCEH_-YYhn3"
+uri = "file://generated-artifacts/diyar-contact-390.png"
+type = "image"
+title = "تواصل معنا — الموبايل"
+description = "الكروت الجديدة على شاشة 390 بكسل."
+logical_id = "7b8c1c2c-b3f1-40a2-9232-a6f8c362c40e"
+content_hash = "sha256:75204afbc1bc31118e3115bec0b5abdd62daefafd4e21d85a4f657cad4f2ebb3"
+size = 95272
+mtime_ms = 1794952350110
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/7b8c1c2c-b3f1-40a2-9232-a6f8c362c40e/a3ff7ec2-6cf8-46c0-b506-329f1c342438"
+storage_version_token = "1794952362982265"
+content_type = "image/png"
+
+[[outputs]]
+id = "x0fyVVpnJxNE9eTc3t_vC"
+uri = "file://generated-artifacts/jeddah-bleed-before-1440.png"
+type = "image"
+title = "خريطة المشروعات قبل — 1440 بكسل"
+description = "لقطة من المعاينة بالخريطة الفعلية."
+logical_id = "5ebe01b7-0b1c-433d-afd1-877598253647"
+content_hash = "sha256:66008d0e6766fb3c0da101912d5f6f2eb1243cacb2d17e0d508dd159e37d968b"
+size = 951272
+mtime_ms = 1794952791802
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/5ebe01b7-0b1c-433d-afd1-877598253647/c5b54623-a45d-4daa-970b-55e8fa1f2b4c"
+storage_version_token = "1794953134242093"
+content_type = "image/png"
+
+[[outputs]]
+id = "bQzRM0bnmzIdqaCcLBOqJ"
+uri = "file://generated-artifacts/jeddah-bleed-after-1440.png"
+type = "image"
+title = "خريطة المشروعات بعد — 1440 بكسل"
+description = "لقطة من المعاينة بالخريطة الفعلية."
+logical_id = "8a9da0aa-bad5-4c47-b1ff-9e92cad8487c"
+content_hash = "sha256:2e2afa7dd95b0b6f11a5573635af1851e3c99c8786bf1f33b8f6d84849ada8d4"
+size = 1669028
+mtime_ms = 1794953081366
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/8a9da0aa-bad5-4c47-b1ff-9e92cad8487c/716688c3-f15b-41dc-bd57-9e51f9d25bb9"
+storage_version_token = "1794953134734219"
+content_type = "image/png"
+
+[[outputs]]
+id = "ct3jRLpL1_PRmHiGcXtf8"
+uri = "file://generated-artifacts/jeddah-bleed-before-390.png"
+type = "image"
+title = "خريطة المشروعات قبل — 390 بكسل"
+description = "لقطة من المعاينة بالخريطة الفعلية."
+logical_id = "19cfba32-d19c-4ae4-8d3d-807d50ace446"
+content_hash = "sha256:4e0a7b96907aff028651a517b97bde800979900c5d870ccd40a583fcf2f344fc"
+size = 185379
+mtime_ms = 1794952796014
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/19cfba32-d19c-4ae4-8d3d-807d50ace446/02f694b4-bd50-423a-9ecc-f29083343210"
+storage_version_token = "1794953135269305"
+content_type = "image/png"
+
+[[outputs]]
+id = "Yi-_3eeGIzBUjebo6VvQO"
+uri = "file://generated-artifacts/jeddah-bleed-after-390.png"
+type = "image"
+title = "خريطة المشروعات بعد — 390 بكسل"
+description = "لقطة من المعاينة بالخريطة الفعلية."
+logical_id = "abea1aef-c4ee-43ef-bc25-e032bbebb633"
+content_hash = "sha256:5f70c0e2277a8b16ab361132216e32c91f5d145f536ad89ff01aec196e5397a6"
+size = 364133
+mtime_ms = 1794953085882
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/abea1aef-c4ee-43ef-bc25-e032bbebb633/82df01a5-d6bb-4b73-bb30-f3e7b392a8f6"
+storage_version_token = "1794953135783595"
+content_type = "image/png"
+
+[[outputs]]
+id = "4jQdiCrKGTd6gG-A_dtRw"
+uri = "file://generated-artifacts/diyar-alkhebra-project.zip"
+type = "unspecified"
+title = "ملفات مشروع موقع ديار الخبرة"
+description = "نسخة ZIP من الكود وملفات الموقع، من غير المفاتيح السرّية."
+logical_id = "90e73e08-63e4-402e-96eb-19ce4f7f276a"
+content_hash = "sha256:43cad145283cf3a512da56a1e2b1e7fd809b1e1a0c38a1f4b930f4673430adb4"
+size = 13488524
+mtime_ms = 1794955663697
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/90e73e08-63e4-402e-96eb-19ce4f7f276a/0fd6c709-16c2-40b5-868f-c69f67b71795"
+storage_version_token = "1794955668090345"
+content_type = "application/octet-stream"

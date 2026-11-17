@@ -2,7 +2,7 @@ import { type ReactNode, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { AlertCircle, Building2, Check, Copy, FileBadge, Globe, MapPin, Phone, Send } from 'lucide-react';
+import { AlertCircle, ArrowUpLeft, Building2, Check, Copy, FileBadge, Globe, MapPin, Phone, Send } from 'lucide-react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { contactConfig, whatsappUrl } from '@/contact';
 import WhatsAppIcon from './WhatsAppIcon';
@@ -26,18 +26,25 @@ const formatMessage = (values: InquiryValues) => [
   `نبذة عن المشروع: ${values.details}`,
 ].join('\n');
 
-function DetailRow({ icon, label, value, href, ltr = false, testId }: { icon: ReactNode; label: string; value: string; href?: string; ltr?: boolean; testId: string }) {
-  return (
-    <div className="contact-detail" data-testid={testId}>
-      <span className="contact-detail-icon">{icon}</span>
+function ContactCard({ icon, label, value, href, ltr = false, primary = false, testId }: {
+  icon: ReactNode; label: string; value: string; href?: string; ltr?: boolean; primary?: boolean; testId: string;
+}) {
+  const external = href?.startsWith('https://');
+  const className = `contact-detail${primary ? ' contact-detail-primary' : ''}`;
+  const content = (
+    <>
+      <span className="contact-detail-icon" aria-hidden="true">{icon}</span>
       <span className="contact-detail-copy">
         <small>{label}</small>
-        {href
-          ? <a href={href} dir={ltr ? 'ltr' : undefined} target={href.startsWith('http') ? '_blank' : undefined} rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}>{value}</a>
-          : <strong dir={ltr ? 'ltr' : undefined}>{value}</strong>}
+        <strong><bdi dir={ltr ? 'ltr' : 'rtl'}>{value}</bdi></strong>
       </span>
-    </div>
+      {href && <ArrowUpLeft size={16} className="contact-detail-arrow" aria-hidden="true" />}
+    </>
   );
+  return href
+    ? <a className={className} data-testid={testId} href={href}
+        target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>{content}</a>
+    : <div className={className} data-testid={testId}>{content}</div>;
 }
 
 export default function ContactSection({ inquiry }: { inquiry: { details: string } | null }) {
@@ -84,10 +91,10 @@ export default function ContactSection({ inquiry }: { inquiry: { details: string
           <h2 id="contact-title">لديك مشروع؟<br /><em>لنبدأ من نطاقه.</em></h2>
           <p>اتصل بنا مباشرة، أو جهّز نبذة عن مشروعك ونوع الأعمال المطلوبة من خلال النموذج.</p>
           <div className="contact-details" aria-label="بيانات التواصل">
-            <DetailRow icon={<Phone size={17} />} label="الهاتف" value={contactConfig.phone} href={contactConfig.phoneHref} ltr testId="text-contact-phone" />
-            <DetailRow icon={<Globe size={17} />} label="الموقع الإلكتروني" value={contactConfig.website} href={contactConfig.websiteHref} ltr testId="text-contact-website" />
-            <DetailRow icon={<MapPin size={17} />} label="العنوان" value={contactConfig.address} testId="text-contact-address" />
-            <DetailRow icon={<FileBadge size={17} />} label="السجل التجاري" value={contactConfig.commercialRegistration} ltr testId="text-contact-cr" />
+            <ContactCard icon={<Phone size={19} />} label="اتصل بنا" value={contactConfig.phone} href={contactConfig.phoneHref} ltr primary testId="text-contact-phone" />
+            <ContactCard icon={<Globe size={19} />} label="الموقع الإلكتروني" value={contactConfig.website} href={contactConfig.websiteHref} ltr testId="text-contact-website" />
+            <ContactCard icon={<MapPin size={19} />} label="العنوان" value={contactConfig.address} testId="text-contact-address" />
+            <ContactCard icon={<FileBadge size={19} />} label="السجل التجاري" value={contactConfig.commercialRegistration} ltr testId="text-contact-cr" />
           </div>
         </div>
 

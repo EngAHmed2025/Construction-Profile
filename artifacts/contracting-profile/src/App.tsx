@@ -7,18 +7,20 @@ import {
 } from 'lucide-react';
 import { Route, Switch, useRoute, useLocation, Router as WouterRouter } from 'wouter';
 import logo from './assets/diyar-logo.webp';
-import { formatNumber, projects, totalAreaM2 } from './projects';
+import { projects, totalAreaM2 } from './projects';
+import CountUp from '@/components/site/CountUp';
+import CompanyStrategy from '@/components/site/CompanyStrategy';
 import Credentials from '@/components/site/Credentials';
+import HeroProjects from '@/components/site/HeroProjects';
 import PartnersStrip from '@/components/site/PartnersStrip';
 import ProjectsSection from '@/components/site/ProjectsSection';
+import ReturnToSiteLoader, { brandRevealMs } from '@/components/site/ReturnToSiteLoader';
 import SiteFooter from '@/components/site/SiteFooter';
 import WhatsAppFloat from '@/components/site/WhatsAppFloat';
 import CredentialsPage from '@/pages/credentials';
 
 const ContactSection = lazy(() => import('@/components/site/ContactSection'));
 const ProjectModal = lazy(() => import('@/components/site/ProjectModal'));
-const heroPhoto = `${import.meta.env.BASE_URL}hero-finished.webp`;
-const heroPhotoSmall = `${import.meta.env.BASE_URL}hero-finished-sm.webp`;
 
 const navigation = [
   { label: 'المشروعات', href: '#projects' },
@@ -106,11 +108,6 @@ function Home() {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    if (activeProject) document.title = `${activeProject.title} | ديار الخبرة للمقاولات العامة`;
-    else document.title = 'ديار الخبرة للمقاولات العامة | بنية تحتية وأعمال مواقع في جدة';
-  }, [activeProject]);
-
   const closeMenu = () => setMenuOpen(false);
   const openProject = (projectId: string) => setLocation(`/projects/${projectId}`);
   const closeProject = () => setLocation('/');
@@ -156,20 +153,14 @@ function Home() {
                 <a href="#projects" className="hero-text-link" data-testid="link-hero-projects">تعرّف على مشروعاتنا <ArrowUpLeft size={16} /></a>
               </div>
             </div>
-            <figure className="hero-photo">
-              <picture>
-                <source media="(max-width: 767px)" srcSet={heroPhotoSmall} />
-                <img src={heroPhoto} alt="طريق مرصوف ومضاء في مخطط الهملان بجدة بعد التنفيذ" width={1074} height={599} fetchPriority="high" />
-              </picture>
-              <figcaption>مخطط الهملان 674 ج/س — الطرق والإنارة بعد التنفيذ</figcaption>
-            </figure>
+            <HeroProjects />
           </div>
         </section>
 
         <section className="trust-strip" aria-label="أرقام من ملف الشركة">
           <div className="container-wide trust-inner">
-            <div className="trust-item"><strong><bdi dir="ltr">{formatNumber(Math.round(totalAreaM2))}</bdi></strong><span>إجمالي مساحات المشروعات المدرجة (م²)</span></div>
-            <div className="trust-item"><strong>{projects.length}</strong><span>مشروعاً في ملف الشركة، منها {completedCount} منفّذة</span></div>
+            <div className="trust-item"><strong><CountUp value={Math.round(totalAreaM2)} /></strong><span>إجمالي مساحات المشروعات المدرجة (م²)</span></div>
+            <div className="trust-item"><strong><CountUp value={projects.length} /></strong><span>مشروعاً في ملف الشركة، منها {completedCount} منفّذة</span></div>
             <div className="trust-item"><strong>جدة</strong><span>جميع المشروعات داخل المدينة</span></div>
             <div className="trust-item"><strong>NWC</strong><span>اعتمادات لدى شركة المياه الوطنية وأمانة جدة</span></div>
           </div>
@@ -189,9 +180,14 @@ function Home() {
               {services.map((service, index) => {
                 const Icon = service.icon;
                 return <article className="service-card" key={service.title}>
-                  <div className="service-top"><span>{String(index + 1).padStart(2, '0')}</span><Icon size={23} strokeWidth={1.45} /></div>
+                  <div className="service-top" aria-hidden="true">
+                    <span className="service-icon"><Icon size={24} strokeWidth={1.65} /></span>
+                    <span className="service-index" dir="ltr">{String(index + 1).padStart(2, '0')}</span>
+                  </div>
                   <h3>{service.title}</h3><p>{service.text}</p>
-                  <a href="#contact" aria-label={`استفسر عن ${service.title}`} data-testid={`link-service-${index + 1}`}><ArrowUpLeft size={17} /></a>
+                  <a href="#contact" className="service-inquiry" aria-label={`استفسر عن ${service.title}`} data-testid={`link-service-${index + 1}`}>
+                    استفسر عن الخدمة <span><ArrowUpLeft size={17} aria-hidden="true" /></span>
+                  </a>
                 </article>;
               })}
             </div>
@@ -224,6 +220,7 @@ function Home() {
             </div>
             <Credentials />
           </div>
+          <CompanyStrategy />
         </section>
 
         <DeferredContact inquiry={inquiry} />
@@ -236,7 +233,40 @@ function Home() {
 }
 
 function Router() {
-  return <RoutedErrorBoundary><Switch><Route path="/" component={Home} /><Route path="/credentials" component={CredentialsPage} /><Route path="/projects/:id" component={Home} /><Route component={NotFound} /></Switch></RoutedErrorBoundary>;
+  const [location, navigate] = useLocation();
+  const [returning, setReturning] = useState<{ hash: string; started: number } | null>(null);
+
+  useEffect(() => {
+    if (!returning || location !== '/credentials') return;
+    let nextFrame = 0;
+    const frame = requestAnimationFrame(() => {
+      nextFrame = requestAnimationFrame(() => navigate(`/${returning.hash}`));
+    });
+    return () => { cancelAnimationFrame(frame); cancelAnimationFrame(nextFrame); };
+  }, [location, navigate, returning]);
+
+  useEffect(() => {
+    if (!returning || location === '/credentials') return;
+    const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : brandRevealMs + 400;
+    const timer = window.setTimeout(() => {
+      if (location === '/') {
+        const target = returning.hash ? document.getElementById(returning.hash.slice(1)) : null;
+        if (target) target.scrollIntoView({ behavior: 'instant' });
+        else window.scrollTo({ top: 0, behavior: 'instant' });
+      }
+      setReturning(null);
+    }, Math.max(0, duration - (performance.now() - returning.started)));
+    return () => window.clearTimeout(timer);
+  }, [location, returning]);
+
+  return <>
+    <div inert={returning !== null}>
+      <RoutedErrorBoundary><Switch><Route path="/" component={Home} /><Route path="/credentials">
+        <CredentialsPage onReturn={(hash = '') => setReturning((current) => current ?? { hash, started: performance.now() })} />
+      </Route><Route path="/projects/:id" component={Home} /><Route component={NotFound} /></Switch></RoutedErrorBoundary>
+    </div>
+    {returning && <ReturnToSiteLoader />}
+  </>;
 }
 
 function RoutedErrorBoundary({ children }: { children: ReactNode }) {

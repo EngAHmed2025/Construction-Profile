@@ -1,13 +1,11 @@
-import { lazy, type MouseEvent, Suspense, useEffect, useRef, useState } from 'react';
 import { ArrowUpLeft, LayoutGrid, Map as MapIcon } from 'lucide-react';
-import { projects, projectMeasure, type CompanyProject } from '@/projects';
-import type { JeddahCityMapHandle } from '@/JeddahCityMap';
+import { lazy, type MouseEvent, Suspense, useEffect, useMemo, useState } from 'react';
+import { googleProjectUrl, projects, projectMeasure, type CompanyProject } from '@/projects';
 import StatusBadge from './StatusBadge';
 import mousaCover from '@/assets/projects/mousa-cover.webp';
 
-const loadMap = () => import('@/JeddahCityMap');
-const JeddahCityMap = lazy(loadMap);
-const isDesktop = () => typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches;
+const ProjectsMap = lazy(() => import('./ProjectsMap'));
+const photoIntervalMs = 2300;
 
 type Props = { onOpenProject: (projectId: string) => void };
 type Filter = 'all' | 'done' | 'developing';
@@ -21,6 +19,7 @@ const filters: { id: Filter; label: string; match: (project: CompanyProject) => 
 const frontRow = ['hamlan-674', 'yahya-alwisam', 'shams-al-arous'];
 const planOnly = new Set(['alfal-alsawari', 'alwedad-almarwah', 'almarkaz-almanarat']);
 const representative = projects.find(({ id }) => id === 'red-sea-village-alma')?.photos[0];
+const preferredPhoto: Record<string, number> = { 'yahya-alwisam': 7, 'shams-al-arous': 5 };
 const orderedProjects = [
   ...frontRow.flatMap((id) => projects.filter((project) => project.id === id)),
   ...projects.filter((project) => !frontRow.includes(project.id) && !planOnly.has(project.id) && project.id !== 'obhur-complex'),
@@ -29,24 +28,80 @@ const orderedProjects = [
 
 function ProjectCard({ project, onOpen }: { project: CompanyProject; onOpen: (id: string, event: MouseEvent<HTMLAnchorElement>) => void }) {
   const measure = projectMeasure(project);
+  const [previewing, setPreviewing] = useState(false);
+  const [{ current: photoIndex, previous }, setPhoto] = useState<{ current: number; previous: number | null }>({ current: 0, previous: null });
   const isRepresentative = project.id === 'obhur-complex';
-  const cover = isRepresentative ? representative?.thumb : planOnly.has(project.id) ? undefined : ({
-    'hamlan-674': project.photos[0]?.thumb,
-    'yahya-alwisam': project.photos[7]?.thumb,
-    'shams-al-arous': project.photos[5]?.thumb,
-    'almousa-view': mousaCover,
-  }[project.id] ?? project.photos[0]?.thumb);
+  const previews = useMemo(() => {
+    const image = (photo: CompanyProject['photos'][number]) => photo.thumb || photo.src;
+    if (isRepresentative) return representative ? [image(representative)] : [];
+    if (planOnly.has(project.id)) return [];
+    const featured = preferredPhoto[project.id] ?? 0;
+    const preferred = project.photos[featured];
+    if (project.id === 'almousa-view') return [mousaCover, ...project.photos.map(image)];
+    if (!preferred) return project.photos.map(image);
+    return [image(preferred), ...project.photos.filter((_, index) => index !== featured).map(image)];
+  }, [isRepresentative, project.id, project.photos]);
+  const photoCount = previews.length;
+  const cover = previews[photoIndex];
+  const previousCover = previous === null ? null : previews[previous];
+
+  useEffect(() => {
+    if (!previewing || photoCount < 2) return;
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (motion.matches) return;
+    let cancelled = false;
+    let timer = 0;
+    let index = 0;
+
+    const queueNext = () => {
+      index = (index + 1) % photoCount;
+      const next = new Image();
+      next.src = previews[index];
+      const decoded = next.decode().then(() => true, () => false);
+      timer = window.setTimeout(async () => {
+        const ready = await decoded;
+        if (cancelled) return;
+        if (ready) {
+          const upcoming = index;
+          setPhoto(({ current }) => current === upcoming ? { current, previous: null } : { current: upcoming, previous: current });
+        }
+        queueNext();
+      }, photoIntervalMs);
+    };
+    const stop = () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+    const onMotionChange = () => {
+      if (motion.matches) { stop(); setPreviewing(false); setPhoto({ current: 0, previous: null }); }
+    };
+    motion.addEventListener('change', onMotionChange);
+    queueNext();
+    return () => {
+      stop();
+      motion.removeEventListener('change', onMotionChange);
+    };
+  }, [previewing, photoCount, previews]);
+
   return (
-    <a href={`/projects/${project.id}`} className="project-card" onClick={(event) => onOpen(project.id, event)} data-testid={`card-project-${project.id}`}>
-      {cover && (
-        <span className="project-card-media">
-          <img src={cover} alt="" loading="lazy" decoding="async" width={720} height={540} />
-          <span className="project-card-number">{project.number}</span>
-          {isRepresentative
-            ? <span className="project-card-count">صورة توضيحية لأعمال شبكات من مشروع آخر</span>
-            : project.photos.length > 1 && <span className="project-card-count">{project.photos.length} صور</span>}
-        </span>
-      )}
+    <a href={`/projects/${project.id}`} className="project-card" onClick={(event) => onOpen(project.id, event)} data-testid={`card-project-${project.id}`}
+      onPointerEnter={(event) => {
+        if (event.pointerType === 'mouse' && photoCount > 1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) setPreviewing(true);
+      }}
+      onPointerLeave={() => {
+        if (!previewing) return;
+        setPreviewing(false);
+        setPhoto(({ current }) => ({ current: 0, previous: current === 0 ? null : current }));
+      }}>
+      {cover && <span className="project-card-media">
+        {previousCover && <img key={previous} className="project-card-photo" src={previousCover} alt="" width={720} height={540} />}
+        <img key={photoIndex} className={`project-card-photo${previousCover ? ' project-card-photo-enter' : ''}`}
+          src={cover} alt="" loading={previousCover ? 'eager' : 'lazy'} decoding="async" width={720} height={540} />
+        <span className="project-card-number">{project.number}</span>
+        {(isRepresentative || photoCount > 1) && <span className="project-card-count">
+          {isRepresentative ? 'صورة توضيحية لأعمال شبكات من مشروع آخر' : previewing ? <bdi dir="ltr">{photoIndex + 1} / {photoCount}</bdi> : <>{photoCount} صور</>}
+        </span>}
+      </span>}
       <span className="project-card-body">
         <span className="project-card-meta">
           {project.status && <StatusBadge status={project.status} />}
@@ -65,52 +120,20 @@ function ProjectCard({ project, onOpen }: { project: CompanyProject; onOpen: (id
 }
 
 export default function ProjectsSection({ onOpenProject }: Props) {
-  const [view, setView] = useState<'cards' | 'map'>('cards');
+  const [view, setView] = useState<'cards' | 'map'>(() =>
+    new URLSearchParams(window.location.search).get('view') === 'map' ? 'map' : 'cards',
+  );
   const [filter, setFilter] = useState<Filter>('all');
-  const cityMapRef = useRef<JeddahCityMapHandle>(null);
-  const pending = useRef(false);
   const visible = orderedProjects.filter(filters.find((entry) => entry.id === filter)!.match);
-
-  const sectionRef = useRef<HTMLElement>(null);
-  useEffect(() => { pending.current = false; }, [view]);
-
-  // Warm the map chunk only when the projects section approaches the viewport on desktop.
-  useEffect(() => {
-    const node = sectionRef.current;
-    if (!node || !isDesktop() || !('IntersectionObserver' in window)) return;
-    const observer = new IntersectionObserver((entries) => {
-      if (entries.some((entry) => entry.isIntersecting)) { void loadMap(); observer.disconnect(); }
-    }, { rootMargin: '300px 0px' });
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-
-  // Mobile is cards-only: fall back if the viewport shrinks while the map tab is open.
-  useEffect(() => {
-    const query = window.matchMedia('(max-width: 767px)');
-    const sync = () => { if (query.matches) setView('cards'); };
-    query.addEventListener('change', sync);
-    return () => query.removeEventListener('change', sync);
-  }, []);
 
   const openFromCard = (projectId: string, event: MouseEvent<HTMLAnchorElement>) => {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
     onOpenProject(projectId);
   };
-  const openFromPin = (projectId: string, event: MouseEvent<HTMLAnchorElement>) => {
-    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    if (pending.current) return;
-    const map = cityMapRef.current;
-    if (!map || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { onOpenProject(projectId); return; }
-    pending.current = true;
-    const done = () => { pending.current = false; onOpenProject(projectId); };
-    void map.flyToProject(projectId).then(done, done);
-  };
 
   return (
-    <section ref={sectionRef} className="projects-section" id="projects" aria-labelledby="projects-title">
+    <section className="projects-section" id="projects" aria-labelledby="projects-title">
       <div className="container-wide">
         <div className="section-heading projects-heading">
           <div><span className="eyebrow">مشروعات · جدة</span><h2 id="projects-title">مساحات واسعة، <span>وتفاصيل تحت الأرض.</span></h2></div>
@@ -132,20 +155,31 @@ export default function ProjectsSection({ onOpenProject }: Props) {
             </div>
           )}
         </div>
+      </div>
 
-        {view === 'cards' ? (
+      {view === 'cards' ? (
+        <div className="container-wide">
           <div className="project-grid" data-testid="grid-projects">
             {visible.map((project) => <ProjectCard key={project.id} project={project} onOpen={openFromCard} />)}
           </div>
+        </div>
         ) : (
-          <figure className="map-figure">
-            <Suspense fallback={<div className="map-skeleton" aria-label="جارٍ تحميل الخريطة" />}>
-              <JeddahCityMap ref={cityMapRef} projects={projects} onSelect={openFromPin} />
-            </Suspense>
-            <figcaption className="map-caption">مواضع توضيحية تقريبية</figcaption>
-          </figure>
+          <Suspense fallback={<div className="container-wide map-skeleton" role="status" aria-label="جارٍ تحميل الخريطة" />}>
+            <ProjectsMap onOpenProject={onOpenProject} fallback={
+              <div className="project-grid" data-testid="grid-map-fallback">
+                {projects.map((project) => (
+                  <div className="map-fallback-item" key={project.id}>
+                    <ProjectCard project={project} onOpen={openFromCard} />
+                    <a className="map-fallback-link" target="_blank" rel="noopener noreferrer"
+                      href={googleProjectUrl(project)}>
+                      عرض على خرائط جوجل{!project.coordinates && ' — الحي فقط'}
+                    </a>
+                  </div>
+                ))}
+              </div>
+            } />
+          </Suspense>
         )}
-      </div>
     </section>
   );
 }

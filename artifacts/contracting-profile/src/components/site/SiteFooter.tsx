@@ -30,7 +30,7 @@ export default function SiteFooter({ links }: { links: FooterLink[] }) {
         </div>
       </div>
       <div className="container-wide footer-base">
-        <span>© 2026 ديار الخبرة للمقاولات العامة</span>
+        <span className="footer-copyright">جميع حقوق النشر محفوظة لشركة ديار الخبرة للمقاولات العامة <bdi>2026</bdi></span>
         <a href="#home" className="back-top" data-testid="link-back-top">العودة للأعلى <ArrowUpLeft size={15} /></a>
       </div>
     </footer>

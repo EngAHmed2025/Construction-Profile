@@ -1,0 +1,51 @@
+.company-strategy {
+  margin-block-start: clamp(42px, 6vw, 82px);
+  padding-block-start: clamp(24px, 4vw, 46px);
+  border-block-start: 1px solid #c6bda7;
+}
+.strategy-heading h3 {
+  margin: 8px 0 clamp(20px, 3vw, 32px);
+  color: #293f37;
+  font-size: clamp(1.75rem, 4vw, 3.1rem);
+  line-height: 1.35;
+}
+.strategy-heading h3 span { color: #826124; }
+.company-strategy-grid { display: grid; grid-template-columns: 1fr 1fr 1.22fr; gap: clamp(12px, 1.6vw, 22px); }
+.strategy-card {
+  --strategy-ink: #293f37;
+  --strategy-copy: #47564c;
+  --strategy-accent: #795820;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  padding: clamp(18px, 2.3vw, 32px);
+  background: #f8f5ec;
+  border: 1px solid #d5ccba;
+  border-radius: 13px;
+  box-shadow: 0 12px 24px -24px #293f37;
+}
+.strategy-vision {
+  --strategy-ink: #faf6e9;
+  --strategy-copy: #ebe6d8;
+  --strategy-accent: #efd08b;
+  border-color: #304b3f;
+  background: linear-gradient(145deg, #385348, #263c33 75%);
+}
+.strategy-planning { background: #f1eade; }
+.strategy-card-top { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 8px; color: var(--strategy-accent); }
+.strategy-icon { display: grid; place-items: center; width: 47px; height: 47px; border: 1px solid currentColor; border-radius: 10px; }
+.strategy-number { direction: ltr; font: 600 .92rem var(--app-font-mono); letter-spacing: .08em; }
+.strategy-card h4 { margin: 17px 0 8px; color: var(--strategy-ink); font-size: clamp(1.35rem, 2.2vw, 1.8rem); line-height: 1.4; }
+.strategy-card p, .strategy-steps { margin: 0; color: var(--strategy-copy); font-size: .97rem; line-height: 1.8; }
+.strategy-steps { display: grid; width: 100%; padding: 0; list-style: none; }
+.strategy-steps li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 8px; align-items: start; padding-block: 7px; }
+.strategy-steps li + li { border-block-start: 1px solid #d5cab4; }
+.strategy-steps li span { display: grid; place-items: center; width: 24px; height: 24px; margin-block-start: 2px; border-radius: 50%; color: #684915; background: #e9d7a8; font-size: .78rem; font-weight: 700; }
+@media (max-width: 980px) {
+  .company-strategy-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .strategy-planning { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .company-strategy-grid { grid-template-columns: minmax(0, 1fr); }
+}
