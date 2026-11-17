@@ -7,12 +7,15 @@ import {
   type MouseEvent,
 } from 'react';
 import * as THREE from 'three';
-import { RotateCcw, ZoomIn, ZoomOut } from 'lucide-react';
+import { ArrowRight, RotateCcw, X, ZoomIn, ZoomOut } from 'lucide-react';
 import type { DemoProject } from './projects';
+import PanoramaViewer from './PanoramaViewer';
 
 type JeddahCityMapProps = {
   projects: DemoProject[];
   onSelect: (projectId: string, event: MouseEvent<HTMLAnchorElement>) => void;
+  activeProject: DemoProject | null;
+  onCloseProject: () => void;
 };
 
 export type JeddahCityMapHandle = {
@@ -23,7 +26,7 @@ const arabicNumber = (value: number) =>
   String(value).replace(/[0-9]/g, (digit) => '٠١٢٣٤٥٦٧٨٩'[Number(digit)]);
 
 const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
-  function JeddahCityMap({ projects, onSelect }, ref) {
+  function JeddahCityMap({ projects, onSelect, activeProject, onCloseProject }, ref) {
   const mountRef = useRef<HTMLDivElement>(null);
   const resetRef = useRef<(() => void) | null>(null);
   const flyToRef = useRef<((projectId: string) => Promise<boolean>) | null>(null);
@@ -384,6 +387,10 @@ const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
     };
   }, [projects]);
 
+  useEffect(() => {
+    if (!activeProject) resetRef.current?.();
+  }, [activeProject]);
+
   const changeZoom = (amount: number) => {
     mountRef.current?.dispatchEvent(new CustomEvent('city-map-zoom', { detail: amount }));
   };
@@ -454,6 +461,33 @@ const JeddahCityMap = forwardRef<JeddahCityMapHandle, JeddahCityMapProps>(
         </>
       )}
       <div className="city-map-disclaimer">تصوّر ثلاثي الأبعاد تقريبي لأغراض العرض — لا يمثل خريطة فعلية أو مواقع موثقة</div>
+      {activeProject && (
+        <section
+          className="city-map-project-view"
+          key={activeProject.id}
+          aria-label={`مشهد المشروع داخل خريطة جدة: ${activeProject.title}`}
+          data-testid="panel-project-map-view"
+        >
+          <PanoramaViewer image={activeProject.panorama} title={activeProject.title} />
+          <div className="city-project-topbar">
+            <button type="button" onClick={onCloseProject} aria-label="العودة إلى خريطة جدة" data-testid="button-close-project-map-view">
+              <ArrowRight size={17} aria-hidden="true" />
+              <span>خريطة جدة</span>
+            </button>
+            <div className="city-project-title">
+              <span>{activeProject.city} <i>·</i> {activeProject.type}</span>
+              <strong>{activeProject.title}</strong>
+            </div>
+            <button className="city-project-close" type="button" onClick={onCloseProject} aria-label="إغلاق المشهد" title="إغلاق">
+              <X size={18} aria-hidden="true" />
+            </button>
+          </div>
+          <div className="city-project-caption">
+            <span>مشهد بانورامي تجريبي — صورة توضيحية وليست صورة لموقع فعلي</span>
+            <p>{activeProject.shortDescription}</p>
+          </div>
+        </section>
+      )}
     </div>
   );
 });

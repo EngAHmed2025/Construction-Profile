@@ -1,9 +1,8 @@
-import { type MouseEvent, type ReactNode, useRef, useState } from 'react';
+import { type MouseEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { flushSync } from 'react-dom';
 import NotFound from '@/pages/not-found';
 import {
   ArrowDown,
@@ -23,7 +22,6 @@ import {
   X,
 } from 'lucide-react';
 import {
-  Link,
   Route,
   Switch,
   useRoute,
@@ -32,7 +30,6 @@ import {
 } from 'wouter';
 import heroImage from './assets/architecture-hero.jpg';
 import { projects } from './projects';
-import PanoramaViewer from './PanoramaViewer';
 import JeddahCityMap, { type JeddahCityMapHandle } from './JeddahCityMap';
 
 const queryClient = new QueryClient();
@@ -66,91 +63,35 @@ function BrandMark() {
 function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [, setLocation] = useLocation();
+  const [, projectParams] = useRoute('/projects/:id');
   const cityMapRef = useRef<JeddahCityMapHandle>(null);
   const projectNavigationPending = useRef(false);
+  const activeProject = projects.find((project) => project.id === projectParams?.id) ?? null;
+
+  useEffect(() => {
+    if (!activeProject) return;
+    document.getElementById('projects')?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+      block: 'center',
+    });
+  }, [activeProject?.id]);
 
   const closeMenu = () => setMenuOpen(false);
 
   const navigateToProject = (projectId: string) => {
     projectNavigationPending.current = false;
-    const target = `/projects/${projectId}`;
-    const reducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches;
-    const transitionDocument = document as Document & {
-      startViewTransition?: (callback: () => void) => {
-        finished: Promise<void>;
-      };
-    };
+    setLocation(`/projects/${projectId}`);
+  };
 
-    if (reducedMotion) {
-      window.scrollTo({ top: 0, left: 0 });
-      setLocation(target);
-      return;
-    }
-
-    if (!transitionDocument.startViewTransition) {
-      const root = document.getElementById('root');
-      if (!root?.animate) {
-        window.scrollTo({ top: 0, left: 0 });
-        setLocation(target);
-        return;
-      }
-
-      if (document.documentElement.classList.contains('project-entry-running')) {
-        return;
-      }
-
-      document.documentElement.classList.add('project-entry-running');
-      const exitAnimation = root.animate(
-        [
-          {
-            opacity: 1,
-            transform: 'perspective(1200px) translate3d(0, 0, 0) scale(1)',
-            filter: 'blur(0) brightness(1)',
-          },
-          {
-            opacity: 0,
-            transform: 'perspective(1200px) translate3d(0, 9vh, 0) scale(.88) rotateX(-6deg)',
-            filter: 'blur(12px) brightness(.35)',
-          },
-        ],
-        {
-          duration: 680,
-          easing: 'cubic-bezier(.55, 0, .8, .35)',
-          fill: 'forwards',
-        },
-      );
-
-      const enterProjectPage = () => {
-        exitAnimation.cancel();
-        window.scrollTo({ top: 0, left: 0 });
-        document.documentElement.classList.remove('project-entry-running');
-        document.documentElement.classList.add('project-entry-fallback');
-        flushSync(() => setLocation(target));
-        window.setTimeout(() => {
-          document.documentElement.classList.remove('project-entry-fallback');
-        }, 1450);
-      };
-
-      void exitAnimation.finished.then(enterProjectPage, () => {
-        document.documentElement.classList.remove('project-entry-running');
-        window.scrollTo({ top: 0, left: 0 });
-        setLocation(target);
+  const closeProject = () => {
+    projectNavigationPending.current = false;
+    setLocation('/#projects');
+    window.setTimeout(() => {
+      document.getElementById('projects')?.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+        block: 'center',
       });
-      return;
-    }
-
-    try {
-      const transition = transitionDocument.startViewTransition(() => {
-        window.scrollTo({ top: 0, left: 0 });
-        flushSync(() => setLocation(target));
-      });
-      void transition.finished.catch(() => undefined);
-    } catch {
-      window.scrollTo({ top: 0, left: 0 });
-      setLocation(target);
-    }
+    }, 0);
   };
 
   const enterProject = (
@@ -183,6 +124,8 @@ function Home() {
       .flyToProject(projectId)
       .then(() => navigateToProject(projectId), () => navigateToProject(projectId));
   };
+
+  if (projectParams && !activeProject) return <NotFound />;
 
   return (
     <div className="site-shell grain" dir="rtl">
@@ -372,7 +315,13 @@ function Home() {
               <p>مجسّم ثلاثي الأبعاد توضيحي لجدة؛ مواقع المشروعات تقريبية وليست عناوين فعلية.</p>
             </div>
             <div className="projects-map-layout">
-              <JeddahCityMap ref={cityMapRef} projects={projects} onSelect={enterProject} />
+              <JeddahCityMap
+                ref={cityMapRef}
+                projects={projects}
+                onSelect={enterProject}
+                activeProject={activeProject}
+                onCloseProject={closeProject}
+              />
               <div className="map-project-list" aria-label="مشاهد افتراضية">
                 {projects.map((project, index) => (
                   <a href={`/projects/${project.id}`} className="map-project-row" key={project.id} onClick={(event) => enterProject(project.id, event)} data-testid={`link-project-${project.id}`}>
@@ -503,50 +452,10 @@ function Router() {
     <RoutedErrorBoundary>
       <Switch>
         <Route path="/" component={Home} />
-        <Route path="/projects/:id" component={ProjectDetail} />
+        <Route path="/projects/:id" component={Home} />
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>
-  );
-}
-
-function ProjectDetail() {
-  const [, params] = useRoute('/projects/:id');
-  const project = projects.find((item) => item.id === params?.id);
-
-  if (!project) {
-    return <NotFound />;
-  }
-
-  return (
-    <main className="panorama-page grain" dir="rtl">
-      <header className="panorama-header">
-        <div className="container-wide panorama-header-inner">
-          <BrandMark />
-          <Link href="/#projects" className="panorama-back" data-testid="link-back-to-project-map">
-            <ArrowLeft size={17} aria-hidden="true" /> العودة إلى خريطة المشاهد
-          </Link>
-        </div>
-      </header>
-      <section className="panorama-intro container-wide">
-        <div>
-          <span className="eyebrow">جولة افتراضية تجريبية · مدينة جدة</span>
-          <h1>{project.title}</h1>
-          <p>{project.shortDescription}</p>
-        </div>
-        <div className="panorama-index"><span>{project.type}</span><span>٠٣ / {String(projects.indexOf(project) + 1).replace(/[0-9]/g, (digit) => '٠١٢٣٤٥٦٧٨٩'[Number(digit)])}</span></div>
-      </section>
-      <section className="container-wide panorama-stage" aria-label={`المشهد البانورامي: ${project.title}`}>
-        <PanoramaViewer image={project.panorama} title={project.title} />
-        <div className="panorama-demo-label">مشهد توضيحي تجريبي — لا يمثل موقعاً أو مشروعاً منفذاً</div>
-      </section>
-      <section className="container-wide panorama-footer">
-        <div><span className="eyebrow">عن المشهد</span><p>{project.shortDescription} هذه الجولة البانورامية نموذج بصري للتجربة فقط.</p></div>
-        <Link href="/#projects" className="button panorama-return" data-testid="link-panorama-return">
-          العودة إلى المشاهد <ArrowLeft size={16} aria-hidden="true" />
-        </Link>
-      </section>
-    </main>
   );
 }
 
