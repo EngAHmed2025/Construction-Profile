@@ -243,9 +243,14 @@ a.wa-float { position: fixed; z-index: 40; bottom: 24px; left: 24px; }
 
 /* ——— Projects cards + detail modal (Phase 4) ——— */
 .projects-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin: 8px 0 26px; }
-.view-tabs { display: inline-flex; padding: 4px; background: #e6e0d1; border-radius: 8px; }
+.view-tabs { display: inline-flex; gap: 10px; padding: 0; background: transparent; }
 .view-tabs button, .status-filters button { display: inline-flex; min-height: 44px; align-items: center; gap: 8px; padding: 0 16px; color: #3a4a42; background: none; border: 0; border-radius: 6px; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
-.view-tabs button.is-active { color: #f5f1e6; background: #30493f; }
+.view-tabs button { min-height: 46px; padding-inline: 20px; border: 1px solid #cfc6b2; border-radius: 999px; background: #faf7ee; color: #4b574d; font-weight: 500; transition: background-color .2s ease, border-color .2s ease, color .2s ease; }
+.view-tabs button svg { width: 17px; height: 17px; stroke-width: 1.6; }
+.view-tabs button:hover { border-color: #a57d2f; color: #293f37; }
+.view-tabs button.is-active { color: #f5f1e6; background: #30493f; border-color: #30493f; }
+.view-tabs button.is-active svg { color: #eed292; }
+.view-tabs button:focus-visible { outline: 2px solid #a57d2f; outline-offset: 3px; }
 .status-filters { display: flex; flex-wrap: wrap; gap: 8px; }
 .status-filters button { border: 1px solid #cbc2ab; }
 .status-filters button span { color: #5f4f2a; font-family: var(--app-font-mono); font-size: 14px; }
