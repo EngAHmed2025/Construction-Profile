@@ -121,7 +121,7 @@ function ProjectCard({ project, onOpen }: { project: CompanyProject; onOpen: (id
 
 export default function ProjectsSection({ onOpenProject }: Props) {
   const [view, setView] = useState<'cards' | 'map'>(() =>
-    new URLSearchParams(window.location.search).get('view') === 'map' ? 'map' : 'cards',
+    new URLSearchParams(window.location.search).get('view') === 'cards' ? 'cards' : 'map',
   );
   const [filter, setFilter] = useState<Filter>('all');
   const visible = orderedProjects.filter(filters.find((entry) => entry.id === filter)!.match);
@@ -142,8 +142,8 @@ export default function ProjectsSection({ onOpenProject }: Props) {
 
         <div className="projects-toolbar">
           <div className="view-tabs" role="tablist" aria-label="طريقة العرض">
-            <button type="button" role="tab" aria-selected={view === 'cards'} className={view === 'cards' ? 'is-active' : ''} onClick={() => setView('cards')} data-testid="tab-projects-cards"><LayoutGrid size={16} /> البطاقات</button>
             <button type="button" role="tab" aria-selected={view === 'map'} className={view === 'map' ? 'is-active' : ''} onClick={() => setView('map')} data-testid="tab-projects-map"><MapIcon size={16} /> عرض على الخريطة</button>
+            <button type="button" role="tab" aria-selected={view === 'cards'} className={view === 'cards' ? 'is-active' : ''} onClick={() => setView('cards')} data-testid="tab-projects-cards"><LayoutGrid size={16} /> البطاقات</button>
           </div>
           {view === 'cards' && (
             <div className="status-filters" aria-label="تصفية حسب الحالة">
