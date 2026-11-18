@@ -139,6 +139,7 @@ function Home() {
 
       <main>
         <section className="hero" id="home" aria-labelledby="hero-title">
+          <HeroProjects />
           <div className="hero-blueprint" aria-hidden="true">
             <div className="blueprint-lines" /><span className="blueprint-road road-one" /><span className="blueprint-road road-two" />
           </div>
@@ -153,7 +154,6 @@ function Home() {
                 <a href="#projects" className="hero-text-link" data-testid="link-hero-projects">تعرّف على مشروعاتنا <ArrowUpLeft size={16} /></a>
               </div>
             </div>
-            <HeroProjects />
           </div>
         </section>
 
