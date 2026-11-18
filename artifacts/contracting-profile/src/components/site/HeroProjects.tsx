@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { projects } from '@/projects';
 
 const slideDurationMs = 6000;
@@ -94,8 +94,8 @@ export default function HeroProjects() {
       </picture>
       {slides.length > 1 && <>
         <div className="hero-slide-controls" role="group" aria-label="التنقّل بين صور المشروعات">
-          <button type="button" aria-label="الصورة السابقة" onClick={() => move(-1)}><ChevronRight size={18} aria-hidden="true" /></button>
-          <button type="button" aria-label="الصورة التالية" onClick={() => move(1)}><ChevronLeft size={18} aria-hidden="true" /></button>
+          <button type="button" aria-label="الصورة السابقة" onClick={() => move(-1)}><ArrowRight size={21} strokeWidth={1.5} aria-hidden="true" /></button>
+          <button type="button" aria-label="الصورة التالية" onClick={() => move(1)}><ArrowLeft size={21} strokeWidth={1.5} aria-hidden="true" /></button>
         </div>
         <span className="hero-slide-count" aria-hidden="true"><bdi dir="ltr">{String(frame.current + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}</bdi></span>
       </>}

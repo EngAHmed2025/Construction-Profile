@@ -149,10 +149,10 @@ a.wa-float { position: fixed; z-index: 40; bottom: 24px; left: 24px; }
 .hero-slideshow figcaption { display: grid; gap: 2px; right: max(24px, calc((100% - 1240px) / 2)); left: 160px; bottom: 28px; line-height: 1.5; }
 .hero-slideshow figcaption strong { color: #fffaf0; font-size: 17px; }
 .hero-slideshow figcaption span { color: #eee4cb; font-size: 13px; }
-.hero-slide-controls { position: absolute; z-index: 3; top: auto; bottom: 28px; inset-inline-end: max(24px, calc((100% - 1240px) / 2)); display: flex; gap: 4px; padding: 4px; border: 1px solid #f2e5bf70; border-radius: 9px; background: #22372ef2; }
-.hero-slide-controls button { display: grid; width: 39px; height: 39px; place-items: center; border-radius: 5px; color: #f8edcf; cursor: pointer; }
-.hero-slide-controls button:is(:hover, :focus-visible) { background: #ecd69c; color: #263d32; }
-.hero-slide-controls button:focus-visible { outline: 2px solid #f8edcf; outline-offset: -2px; }
+.hero-slide-controls { position: absolute; z-index: 3; top: auto; bottom: 96px; inset-inline-end: max(24px, calc((100% - 1240px) / 2)); display: flex; gap: 12px; }
+.hero-slide-controls button { display: grid; width: 48px; height: 48px; padding: 0; place-items: center; border: 1px solid #f5f1e680; border-radius: 50%; background: #f5f1e612; backdrop-filter: blur(8px); color: #f5f1e6; cursor: pointer; transition: background-color .25s ease, color .25s ease, border-color .25s ease; }
+.hero-slide-controls button:is(:hover, :focus-visible) { background: #dbbb68; color: #263d32; border-color: #dbbb68; }
+.hero-slide-controls button:focus-visible { outline: 2px solid #f8edcf; outline-offset: 4px; }
 .hero-slide-count { position: absolute; z-index: 2; top: 24px; inset-inline-end: 24px; padding: 6px 8px; border: 1px solid #f2e5bf70; border-radius: 5px; background: #22372ef2; color: #f8edcf; font: 600 11px/1.25 var(--app-font-mono); }
 @media (pointer: coarse) { .hero-slide-controls button { width: 44px; height: 44px; } }
 
@@ -228,7 +228,7 @@ a.wa-float { position: fixed; z-index: 40; bottom: 24px; left: 24px; }
   .hero-slideshow figcaption { right: 18px; left: 126px; bottom: 24px; }
   .hero-slideshow figcaption strong { font-size: 15px; }
   .hero-slideshow figcaption span { font-size: 12px; }
-  .hero-slide-controls { bottom: 24px; inset-inline-end: 18px; }
+  .hero-slide-controls { bottom: 96px; inset-inline-end: 18px; }
   .trust-item { padding-inline: 14px; }
   .trust-item:nth-child(odd) { padding-inline-start: 0; border: 0; }
   .partners-inner { flex-direction: column; align-items: flex-start; gap: 26px; }
