@@ -20,12 +20,13 @@ const slides = [...projects.filter((project) => project.id === featuredId), ...p
 export default function HeroProjects() {
   const root = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
+  const [frame, setFrame] = useState({ current: 0, previous: null as number | null });
   const [motionAllowed, setMotionAllowed] = useState(() => !window.matchMedia(reducedMotion).matches);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const [visible, setVisible] = useState(true);
   const [pageVisible, setPageVisible] = useState(() => !document.hidden);
-  const slide = slides[active];
+  const slide = slides[frame.current];
   const rotating = motionAllowed && !hovered && !focused && visible && pageVisible && slides.length > 1;
 
   useEffect(() => {
@@ -55,6 +56,20 @@ export default function HeroProjects() {
     return () => window.clearTimeout(timer);
   }, [active, rotating]);
 
+  useEffect(() => {
+    let cancelled = false;
+    const next = slides[active];
+    if (!next) return;
+    const image = new Image();
+    image.src = window.matchMedia('(max-width: 767px)').matches && next.thumb ? next.thumb : next.src;
+    // Keep the current image visible until the replacement is decoded.
+    void image.decode().then(() => {
+      if (!cancelled) setFrame((current) => current.current === active
+        ? current : { previous: current.current, current: active });
+    }).catch(() => { /* Retain the last successfully loaded slide. */ });
+    return () => { cancelled = true; };
+  }, [active]);
+
   if (!slide) return null;
 
   const move = (direction: number) => {
@@ -66,7 +81,13 @@ export default function HeroProjects() {
       onPointerLeave={() => setHovered(false)}
       onFocus={() => setFocused(true)}
       onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
-      <picture key={slide.id}>
+      {frame.previous !== null && (
+        <picture className="hero-slide-image" key={`previous-${slides[frame.previous].id}`} aria-hidden="true">
+          <source media="(max-width: 767px)" srcSet={slides[frame.previous].thumb} />
+          <img src={slides[frame.previous].src} alt="" width={1600} height={892} />
+        </picture>
+      )}
+      <picture className={`hero-slide-image${frame.previous !== null ? ' is-entering' : ''}`} key={slide.id}>
         {slide.thumb && <source media="(max-width: 767px)" srcSet={slide.thumb} />}
         <img src={slide.src} alt={`${slide.title} — ${slide.caption}`} width={1600} height={892}
           fetchPriority={active === 0 ? 'high' : 'auto'} />
@@ -76,7 +97,7 @@ export default function HeroProjects() {
           <button type="button" aria-label="الصورة السابقة" onClick={() => move(-1)}><ChevronRight size={18} aria-hidden="true" /></button>
           <button type="button" aria-label="الصورة التالية" onClick={() => move(1)}><ChevronLeft size={18} aria-hidden="true" /></button>
         </div>
-        <span className="hero-slide-count" aria-hidden="true"><bdi dir="ltr">{String(active + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}</bdi></span>
+        <span className="hero-slide-count" aria-hidden="true"><bdi dir="ltr">{String(frame.current + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}</bdi></span>
       </>}
       <figcaption aria-live={rotating ? 'off' : 'polite'}>
         <strong>{slide.title}</strong><span>{slide.caption}</span>
