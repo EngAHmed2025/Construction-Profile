@@ -2,6 +2,7 @@ import { createRoot } from 'react-dom/client';
 
 import App from './App';
 import { ErrorBoundary } from '@/components/error-boundary';
+import SmoothScroll from '@/components/site/SmoothScroll';
 
 import './site-fonts.css';
 import './index.css';
@@ -14,6 +15,7 @@ createRoot(document.getElementById('root')!, {
   },
 }).render(
   <ErrorBoundary>
+    <SmoothScroll />
     <App />
   </ErrorBoundary>,
 );
