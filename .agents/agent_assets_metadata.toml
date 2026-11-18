@@ -266,3 +266,87 @@ mtime_ms = 1794955663697
 storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/90e73e08-63e4-402e-96eb-19ce4f7f276a/0fd6c709-16c2-40b5-868f-c69f67b71795"
 storage_version_token = "1794955668090345"
 content_type = "application/octet-stream"
+
+[[outputs]]
+id = "aGFepEGGg99QVY-aCBjg-"
+uri = "file://generated-artifacts/cta-review/hero-1440.jpg"
+type = "image"
+title = "Hero — 1440px"
+description = "Updated Arabic copy and layout at 1440px."
+logical_id = "8b22d1bc-7c53-4432-901c-d4d84b7854db"
+content_hash = "sha256:a735c35bf4e591415000a4d83f7189594c95b91e1baedd6040daecf4d1ee2097"
+size = 124410
+mtime_ms = 1794983937554
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/8b22d1bc-7c53-4432-901c-d4d84b7854db/bb5fa87b-0064-4ccd-973b-2f6baf6bda5d"
+storage_version_token = "1794983987919084"
+content_type = "image/jpeg"
+
+[[outputs]]
+id = "JivvH3ceLpQIbEJKkHFQ0"
+uri = "file://generated-artifacts/cta-review/project-cta-1440.jpg"
+type = "image"
+title = "New project CTA band — 1440px"
+description = "Updated Arabic copy and layout at 1440px."
+logical_id = "c640abe2-e372-4684-9d3e-4a6ef9165b5b"
+content_hash = "sha256:af0716de3e435abba9e964948d5d324f72d92d389160c3aa8cb0ab33f139684d"
+size = 49003
+mtime_ms = 1794983938494
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/c640abe2-e372-4684-9d3e-4a6ef9165b5b/15803f3e-0ae4-4076-9814-d18878516245"
+storage_version_token = "1794983988417515"
+content_type = "image/jpeg"
+
+[[outputs]]
+id = "_G2FY1kHTis8etNhhst_f"
+uri = "file://generated-artifacts/cta-review/contact-1440.jpg"
+type = "image"
+title = "Contact section — 1440px"
+description = "Updated Arabic copy and layout at 1440px."
+logical_id = "be83fcaa-e7f6-4535-b466-bc0f15407c33"
+content_hash = "sha256:d6e67fb938ae70e5da6b939a7b8baeebc87ade6226513bdaca09da2eff895bd7"
+size = 123640
+mtime_ms = 1794983940634
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/be83fcaa-e7f6-4535-b466-bc0f15407c33/bec3c750-5839-48f6-b1f7-3948ee38df04"
+storage_version_token = "1794983989024352"
+content_type = "image/jpeg"
+
+[[outputs]]
+id = "I29jc2fOaA7LRBUbLlkaF"
+uri = "file://generated-artifacts/cta-review/hero-390.jpg"
+type = "image"
+title = "Hero — 390px"
+description = "Updated Arabic copy and layout at 390px."
+logical_id = "32444ac7-ef24-4d7c-9bc4-b561ccead714"
+content_hash = "sha256:f4a50a2dbfafab2f397e809d53b0478869e2b19dc9df370becb01e029c67d563"
+size = 42120
+mtime_ms = 1794983944674
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/32444ac7-ef24-4d7c-9bc4-b561ccead714/18f56314-92a1-4518-8865-de7af8b7fa66"
+storage_version_token = "1794983989588215"
+content_type = "image/jpeg"
+
+[[outputs]]
+id = "jtiGOeH1fqyc3NVSK7ZPv"
+uri = "file://generated-artifacts/cta-review/project-cta-390.jpg"
+type = "image"
+title = "New project CTA band — 390px"
+description = "Updated Arabic copy and layout at 390px."
+logical_id = "c80d25a6-fc79-4b3f-9529-0637111f0163"
+content_hash = "sha256:90e3ba84919f630f0f25c99126092c531db9f0efe5a498b9a2deff2d3da2d935"
+size = 25823
+mtime_ms = 1794983945642
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/c80d25a6-fc79-4b3f-9529-0637111f0163/38abe770-93a1-4ebc-aca3-1ec0a88979ef"
+storage_version_token = "1794983990065761"
+content_type = "image/jpeg"
+
+[[outputs]]
+id = "dYTA4uqj9Wx65wLzxt41g"
+uri = "file://generated-artifacts/cta-review/contact-390.jpg"
+type = "image"
+title = "Contact section — 390px"
+description = "Updated Arabic copy and layout at 390px."
+logical_id = "f9c5ae56-d5e7-493c-a1f3-9f170c38ff7f"
+content_hash = "sha256:52cb7956aca996aecda2d5f717c204a51689adbe04b7dc29091a6d5347f5a8cd"
+size = 93145
+mtime_ms = 1794983947734
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:b0a29a41-ed97-4b23-a9c8-5a8ed7c5ed71/f9c5ae56-d5e7-493c-a1f3-9f170c38ff7f/53e4bb5a-b8a8-41d2-9eaa-76f78f8793e5"
+storage_version_token = "1794983990528353"
+content_type = "image/jpeg"

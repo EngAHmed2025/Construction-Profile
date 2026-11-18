@@ -18,7 +18,9 @@ export const contactConfig = {
   commercialRegistration: '4030435420',
 };
 
-export const DEFAULT_WHATSAPP_MESSAGE = 'السلام عليكم، أرغب في الاستفسار عن مشروع';
+export const DEFAULT_WHATSAPP_MESSAGE = 'السلام عليكم، لدي مخطط في [الحي] بمساحة تقريبية [..] م² وأرغب في مناقشة تنفيذ أعماله.';
+
+export type ProjectInquiry = { details?: string; projectType?: string; service?: string };
 
 export function whatsappUrl(message: string = DEFAULT_WHATSAPP_MESSAGE) {
   if (!contactConfig.whatsapp) return null;

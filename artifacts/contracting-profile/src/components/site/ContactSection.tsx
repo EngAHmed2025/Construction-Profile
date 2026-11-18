@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AlertCircle, ArrowUpLeft, Building2, Check, Copy, FileBadge, Globe, MapPin, Phone, Send } from 'lucide-react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { contactConfig, whatsappUrl } from '@/contact';
+import { contactConfig, whatsappUrl, type ProjectInquiry } from '@/contact';
 import WhatsAppIcon from './WhatsAppIcon';
 
 export const projectTypes = ['بنية تحتية', 'طرق', 'شبكات مياه وصرف', 'كهرباء وإنارة', 'تنسيق مواقع', 'أخرى'] as const;
@@ -13,12 +13,14 @@ const schema = z.object({
   name: z.string().trim().min(2, 'اكتب الاسم'),
   phone: z.string().trim().refine((value) => /^(?:\+?966|0)?5\d{8}$/.test(value.replace(/[\s-]/g, '')), 'أدخل رقم جوال سعودي صحيح، مثل 05XXXXXXXX'),
   projectType: z.enum(projectTypes, { errorMap: () => ({ message: 'اختر نوع المشروع' }) }),
+  location: z.string().trim().max(500, 'اختصر الموقع إلى 500 حرف').optional(),
+  area: z.string().trim().refine((value) => !value || (Number.isFinite(Number(value)) && Number(value) > 0), 'أدخل مساحة أكبر من صفر').optional(),
   details: z.string().trim().min(10, 'أضف نبذة قصيرة (10 أحرف على الأقل)').max(800, 'النبذة طويلة؛ اختصرها إلى 800 حرف'),
 });
 type InquiryValues = z.infer<typeof schema>;
 
 const formatMessage = (values: InquiryValues) => [
-  'السلام عليكم، أرغب في الاستفسار عن مشروع',
+  `السلام عليكم، لدي مخطط في ${values.location || '[الحي]'} بمساحة تقريبية ${values.area || '[..]'} م² وأرغب في مناقشة تنفيذ أعماله.`,
   '',
   `الاسم: ${values.name}`,
   `رقم الجوال: ${values.phone}`,
@@ -47,24 +49,27 @@ function ContactCard({ icon, label, value, href, ltr = false, primary = false, t
     : <div className={className} data-testid={testId}>{content}</div>;
 }
 
-export default function ContactSection({ inquiry }: { inquiry: { details: string } | null }) {
+export default function ContactSection({ inquiry }: { inquiry: ProjectInquiry | null }) {
   const [pendingMessage, setPendingMessage] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const form = useForm<InquiryValues>({
     resolver: zodResolver(schema),
-    defaultValues: { name: '', phone: '', projectType: undefined, details: '' },
+    defaultValues: { name: '', phone: '', projectType: undefined, details: '', location: '', area: '' },
   });
 
   const { setFocus, setValue } = form;
   useEffect(() => {
     if (!inquiry) return;
-    setValue('details', inquiry.details, { shouldDirty: true });
+    if (inquiry.details) setValue('details', inquiry.details, { shouldDirty: true });
+    if (inquiry.projectType && projectTypes.includes(inquiry.projectType as typeof projectTypes[number])) {
+      setValue('projectType', inquiry.projectType as typeof projectTypes[number], { shouldDirty: true });
+    }
     document.getElementById('contact')?.scrollIntoView({ block: 'start' });
     setFocus('details');
   }, [inquiry, setFocus, setValue]);
 
   const onSubmit = (values: InquiryValues) => {
-    const message = formatMessage(values);
+    const message = [formatMessage(values), inquiry?.service ? `نطاق الأعمال المختار: ${inquiry.service}` : ''].filter(Boolean).join('\n');
     const url = whatsappUrl(message);
     if (url) {
       window.open(url, '_blank', 'noopener,noreferrer');
@@ -88,8 +93,8 @@ export default function ContactSection({ inquiry }: { inquiry: { details: string
       <div className="container-wide contact-grid">
         <div className="contact-copy">
           <span className="eyebrow">تواصل معنا</span>
-          <h2 id="contact-title">لديك مشروع؟<br /><em>لنبدأ من نطاقه.</em></h2>
-          <p>اتصل بنا مباشرة، أو جهّز نبذة عن مشروعك ونوع الأعمال المطلوبة من خلال النموذج.</p>
+          <h2 id="contact-title">مخططك جاهز للتطوير؟<br /><em>لنبدأ من نطاقه.</em></h2>
+          <p>شاركنا موقع المخطط ومساحته ونوع الأعمال المطلوبة، ويتواصل معك فريقنا لمناقشة التفاصيل.</p>
           <div className="contact-details" aria-label="بيانات التواصل">
             <ContactCard icon={<Phone size={19} />} label="اتصل بنا" value={contactConfig.phone} href={contactConfig.phoneHref} ltr primary testId="text-contact-phone" />
             <ContactCard icon={<Globe size={19} />} label="الموقع الإلكتروني" value={contactConfig.website} href={contactConfig.websiteHref} ltr testId="text-contact-website" />
@@ -101,7 +106,7 @@ export default function ContactSection({ inquiry }: { inquiry: { details: string
         <div className="contact-panel">
           <div className="contact-panel-head">
             <Building2 size={20} strokeWidth={1.6} />
-            <div><h3>تواصل معانا</h3></div>
+            <div><h3>تواصل معانا</h3><p>بيانات بسيطة تساعدنا على فهم مشروعك.</p></div>
           </div>
           <Form {...form}>
             <form className="inquiry-form" onSubmit={form.handleSubmit(onSubmit)} noValidate>
@@ -131,6 +136,21 @@ export default function ContactSection({ inquiry }: { inquiry: { details: string
                   <FormMessage />
                 </FormItem>
               )} />
+              {inquiry?.service && <p className="inquiry-selected-service">نطاق الأعمال المختار: {inquiry.service}</p>}
+              <FormField control={form.control} name="location" render={({ field }) => (
+                <FormItem className="inquiry-field inquiry-field-wide">
+                  <FormLabel>موقع المخطط (رابط خرائط جوجل أو اسم الحي) <span className="field-optional">— اختياري</span></FormLabel>
+                  <FormControl><input {...field} maxLength={500} placeholder="مثال: حي الياقوت، جدة أو رابط خرائط جوجل" data-testid="input-inquiry-location" /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="area" render={({ field }) => (
+                <FormItem className="inquiry-field inquiry-field-wide">
+                  <FormLabel>المساحة التقريبية (م²) <span className="field-optional">— اختياري</span></FormLabel>
+                  <FormControl><input {...field} type="number" inputMode="decimal" min="0.01" step="any" dir="ltr" placeholder="مثال: 25000" data-testid="input-inquiry-area" /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
               <FormField control={form.control} name="details" render={({ field }) => (
                 <FormItem className="inquiry-field inquiry-field-wide">
                   <FormLabel>نبذة عن المشروع</FormLabel>
@@ -140,8 +160,9 @@ export default function ContactSection({ inquiry }: { inquiry: { details: string
               )} />
               <button type="submit" className="site-action site-action-green inquiry-submit" data-testid="button-inquiry-submit">
                 {whatsappReady ? <WhatsAppIcon size={18} /> : <Send size={17} />}
-                <span>{whatsappReady ? 'أرسل عبر واتساب' : 'جهّز رسالة الاستفسار'}</span>
+                <span>أرسل تفاصيل مشروعك</span>
               </button>
+              <p className="inquiry-delivery-note">{whatsappReady ? 'يفتح واتساب برسالة تتضمن بياناتك لتراجعها وترسلها.' : 'واتساب غير متاح حالياً؛ يجهّز النموذج رسالتك للنسخ ولا يرسلها تلقائياً. يمكنك أيضاً الاتصال بنا مباشرة.'}</p>
             </form>
           </Form>
 

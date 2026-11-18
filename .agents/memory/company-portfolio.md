@@ -15,3 +15,7 @@ Verify a keyless basemap visually in the browser, not just by HTTP status. CARTO
 When the user asks for space between the partner logos and the green header, they mean the vertical gap after the green statistics strip, not the gap between the partner section's title and logos.
 
 The user said the company did not have existing vision, mission, or planning copy and asked for it to be written. Treat these as website copy drafted from the company's documented scope, not as official text quoted from the company profile.
+
+Calls-to-action should motivate project owners and developers to discuss their project scope, without promising free services, a site visit, or a response time.
+
+**Why:** The user explicitly prohibited these promises when revising the site's contact copy.

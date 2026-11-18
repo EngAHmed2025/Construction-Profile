@@ -18,6 +18,8 @@ import ReturnToSiteLoader, { brandRevealMs } from '@/components/site/ReturnToSit
 import SiteFooter from '@/components/site/SiteFooter';
 import WhatsAppFloat from '@/components/site/WhatsAppFloat';
 import CredentialsPage from '@/pages/credentials';
+import { whatsappUrl, type ProjectInquiry } from '@/contact';
+import WhatsAppIcon from '@/components/site/WhatsAppIcon';
 
 const ContactSection = lazy(() => import('@/components/site/ContactSection'));
 const ProjectModal = lazy(() => import('@/components/site/ProjectModal'));
@@ -59,7 +61,7 @@ function BrandMark() {
   );
 }
 
-function DeferredContact({ inquiry }: { inquiry: { details: string } | null }) {
+function DeferredContact({ inquiry }: { inquiry: ProjectInquiry | null }) {
   const placeholder = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -84,7 +86,9 @@ function DeferredContact({ inquiry }: { inquiry: { details: string } | null }) {
 
 function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [inquiry, setInquiry] = useState<{ details: string } | null>(null);
+  const [inquiry, setInquiry] = useState<ProjectInquiry | null>(null);
+  const [selectedService, setSelectedService] = useState<number | null>(null);
+  const [whatsappUnavailable, setWhatsappUnavailable] = useState(false);
   const [, setLocation] = useLocation();
   const [, projectParams] = useRoute('/projects/:id');
   const activeProject = projects.find((project) => project.id === projectParams?.id) ?? null;
@@ -115,6 +119,12 @@ function Home() {
     setInquiry({ details });
     setLocation('/#contact');
   };
+  const discussScope = () => {
+    const types = ['بنية تحتية', 'طرق', 'شبكات مياه وصرف', 'بنية تحتية', 'كهرباء وإنارة', 'تنسيق مواقع'];
+    setInquiry(selectedService === null ? {} : { projectType: types[selectedService], service: services[selectedService].title });
+  };
+  const bandWhatsapp = whatsappUrl();
+  const areaMillions = new Intl.NumberFormat('ar-SA', { maximumFractionDigits: 1 }).format(totalAreaM2 / 1_000_000);
 
   if (projectParams && !activeProject) return <NotFound />;
 
@@ -126,14 +136,14 @@ function Home() {
           <nav className={`main-nav${menuOpen ? ' is-open' : ''}`} aria-label="التنقل الرئيسي">
             {navigation.map((item) => <a key={item.href} className="nav-link" href={item.href} onClick={closeMenu}>{item.label}</a>)}
           </nav>
-          <a href="#contact" className="site-action site-action-green header-cta" data-testid="link-header-inquiry">استفسر عن مشروع <ArrowLeft size={16} /></a>
+          <a href="#contact" className="site-action site-action-green header-cta" data-testid="link-header-inquiry">ناقش مشروعك <ArrowLeft size={16} /></a>
           <button type="button" className="menu-toggle" aria-label={menuOpen ? 'إغلاق القائمة' : 'فتح القائمة'} aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)} data-testid="button-menu-toggle">
             {menuOpen ? <X size={21} /> : <Menu size={21} />}
           </button>
         </div>
         <nav className={`mobile-nav${menuOpen ? ' is-open' : ''}`} aria-label="قائمة الهاتف">
           {navigation.map((item) => <a key={item.href} href={item.href} onClick={closeMenu}>{item.label}<ArrowLeft size={15} /></a>)}
-          <a href="#contact" onClick={closeMenu}>استفسر عن مشروع<ArrowLeft size={15} /></a>
+          <a href="#contact" onClick={closeMenu}>ناقش مشروعك<ArrowLeft size={15} /></a>
         </nav>
       </header>
 
@@ -150,7 +160,7 @@ function Home() {
               <h1 id="hero-title">نبني البنية <em>التي تمضي بها الحياة.</em></h1>
               <p className="hero-description">ديار الخبرة للمقاولات العامة. أعمال مواقع، طرق، وشبكات خدمات تُنفّذ بمنهج واضح من أول تجهيز الموقع إلى تفاصيله العامة.</p>
               <div className="hero-actions">
-                <a href="#contact" className="site-action site-action-gold" data-testid="link-hero-inquiry">استفسر عن مشروعك <ArrowLeft size={17} /></a>
+                <a href="#contact" className="site-action site-action-gold" data-testid="link-hero-inquiry">ناقش مشروعك معنا <ArrowLeft size={17} /></a>
                 <a href="#projects" className="hero-text-link" data-testid="link-hero-projects">تعرّف على مشروعاتنا <ArrowUpLeft size={16} /></a>
               </div>
             </div>
@@ -170,6 +180,21 @@ function Home() {
 
         <ProjectsSection onOpenProject={openProject} />
 
+        <section className="project-cta-band" id="project-cta" aria-labelledby="project-cta-title">
+          <div className="container-wide">
+            <h2 id="project-cta-title"><span>{areaMillions} ملايين م²</span> من المخططات بين منفّذ وقيد التطوير. هل مخططك هو التالي؟</h2>
+            <p>من التسويات إلى الشبكات والإنارة والحدائق — نطاق متكامل تحت إدارة واحدة.</p>
+            <div className="project-cta-actions">
+              <a href="#contact" className="site-action site-action-gold">ناقش مشروعك معنا <ArrowLeft size={18} /></a>
+              <a className="hero-text-link" href={bandWhatsapp ?? '#contact'} target={bandWhatsapp ? '_blank' : undefined} rel={bandWhatsapp ? 'noopener noreferrer' : undefined}
+                onClick={() => { if (!bandWhatsapp) setWhatsappUnavailable(true); }}>
+                <WhatsAppIcon size={19} /> تواصل عبر واتساب
+              </a>
+            </div>
+            {whatsappUnavailable && <p className="project-cta-notice" role="status">واتساب غير متاح حالياً. يمكنك التواصل هاتفياً أو تجهيز تفاصيل مشروعك من النموذج.</p>}
+          </div>
+        </section>
+
         <section className="services-section" id="services" aria-labelledby="services-title">
           <div className="container-wide">
             <div className="section-heading services-heading">
@@ -179,16 +204,17 @@ function Home() {
             <div className="services-grid">
               {services.map((service, index) => {
                 const Icon = service.icon;
-                return <article className="service-card" key={service.title}>
+                return <article className={`service-card${selectedService === index ? ' is-selected' : ''}`} key={service.title} onClick={() => setSelectedService(index)}>
                   <div className="service-top" aria-hidden="true">
                     <span className="service-icon"><Icon size={24} strokeWidth={1.65} /></span>
                   </div>
-                  <h3>{service.title}</h3><p>{service.text}</p>
-                  <a href="#contact" className="service-inquiry" aria-label={`استفسر عن ${service.title}`} data-testid={`link-service-${index + 1}`}>
-                    استفسر عن الخدمة <span><ArrowUpLeft size={17} aria-hidden="true" /></span>
-                  </a>
+                  <h3><button className="service-select" type="button" aria-pressed={selectedService === index} onClick={() => setSelectedService(index)} data-testid={`select-service-${index + 1}`}>{service.title}</button></h3><p>{service.text}</p>
                 </article>;
               })}
+            </div>
+            <div className="services-cta">
+              <a href="#contact" className="site-action site-action-green" onClick={discussScope} data-testid="link-services-discuss">ناقش نطاق مشروعك مع فريقنا <ArrowUpLeft size={18} /></a>
+              {selectedService !== null && <p aria-live="polite">النطاق المختار: {services[selectedService].title}</p>}
             </div>
           </div>
         </section>
@@ -206,6 +232,10 @@ function Home() {
                 <article key={step.title}><span>{index + 1}</span><div><h3>{step.title}</h3><p>{step.text}</p></div><Check size={17} /></article>
               ))}
             </div>
+          </div>
+          <div className="container-wide approach-inline-cta">
+            <p>كل مشروع يبدأ بقراءة الموقع والنطاق — ابدأ بمشروعك</p>
+            <a href="#contact" className="hero-text-link">ناقش مشروعك <ArrowUpLeft size={17} /></a>
           </div>
         </section>
 
