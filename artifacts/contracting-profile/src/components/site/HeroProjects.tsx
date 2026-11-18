@@ -22,12 +22,11 @@ export default function HeroProjects() {
   const [active, setActive] = useState(0);
   const [frame, setFrame] = useState({ current: 0, previous: null as number | null });
   const [motionAllowed, setMotionAllowed] = useState(() => !window.matchMedia(reducedMotion).matches);
-  const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const [visible, setVisible] = useState(true);
   const [pageVisible, setPageVisible] = useState(() => !document.hidden);
   const slide = slides[frame.current];
-  const rotating = motionAllowed && !hovered && !focused && visible && pageVisible && slides.length > 1;
+  const rotating = motionAllowed && !focused && visible && pageVisible && slides.length > 1;
 
   useEffect(() => {
     const media = window.matchMedia(reducedMotion);
@@ -77,9 +76,7 @@ export default function HeroProjects() {
   };
   return (
     <figure className="hero-photo hero-slideshow" ref={root} aria-label="صور مشروعات ديار الخبرة"
-      onPointerEnter={(event) => { if (event.pointerType === 'mouse') setHovered(true); }}
-      onPointerLeave={() => setHovered(false)}
-      onFocus={() => setFocused(true)}
+      onFocus={(event) => setFocused(event.target.matches(':focus-visible'))}
       onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
       {frame.previous !== null && (
         <picture className="hero-slide-image" key={`previous-${slides[frame.previous].id}`} aria-hidden="true">
