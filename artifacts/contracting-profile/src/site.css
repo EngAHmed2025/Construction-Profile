@@ -163,9 +163,11 @@ a.wa-float { position: fixed; z-index: 40; bottom: 24px; left: 24px; }
 .partners-inner { display: flex; align-items: center; gap: clamp(36px, 4vw, 56px); }
 .partners-inner h2 { flex: 0 0 auto; margin: 0; color: #2d4239; font-size: 16px; font-weight: 700; }
 .partners-heading { flex: 0 0 auto; display: flex; flex-direction: column; gap: 10px; }
-.partners-controls { display: flex; gap: 5px; }
-.partners-controls button { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid #c6beaa; background: transparent; color: #2d4239; cursor: pointer; }
-.partners-controls button:hover { background: #dfd8c6; }
+.partners-controls { display: flex; gap: 10px; }
+.partners-controls button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid #30493f40; border-radius: 50%; background: #f6f2e8; color: #30493f; box-shadow: 0 3px 9px #263c330a; cursor: pointer; transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease; }
+.partners-controls button:hover { background: #30493f; color: #eed292; border-color: #30493f; box-shadow: 0 4px 12px #263c3326; }
+.partners-controls button:active { background: #263c33; }
+.partners-controls button:focus-visible { outline: 2px solid #826124; outline-offset: 3px; }
 .partners-viewport { flex: 1; min-width: 0; overflow: hidden; cursor: grab; }
 .partners-viewport:active { cursor: grabbing; }
 .partners-list { display: flex; align-items: center; margin: 0; padding: 0; list-style: none; touch-action: pan-y pinch-zoom; user-select: none; }

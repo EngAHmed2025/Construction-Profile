@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const logoFiles = import.meta.glob<string>('../../assets/partners/*.webp', { eager: true, import: 'default' });
 const logo = (name: string) => logoFiles[`../../assets/partners/${name}.webp`];
@@ -52,8 +52,8 @@ export default function PartnersStrip() {
         <div className="partners-heading">
           <h2 id="partners-title">شركاء النجاح</h2>
           <div className="partners-controls" role="group" aria-label="التحكم في عرض الشعارات">
-            <button type="button" aria-label="الشعار السابق" onClick={() => carousel?.scrollPrev()}><ChevronRight size={17} aria-hidden="true" /></button>
-            <button type="button" aria-label="الشعار التالي" onClick={() => carousel?.scrollNext()}><ChevronLeft size={17} aria-hidden="true" /></button>
+            <button type="button" aria-label="الشعار السابق" onClick={() => carousel?.scrollPrev()}><ArrowRight size={19} strokeWidth={1.6} aria-hidden="true" /></button>
+            <button type="button" aria-label="الشعار التالي" onClick={() => carousel?.scrollNext()}><ArrowLeft size={19} strokeWidth={1.6} aria-hidden="true" /></button>
           </div>
         </div>
         <div className="partners-viewport" dir="rtl" ref={viewportRef}>
