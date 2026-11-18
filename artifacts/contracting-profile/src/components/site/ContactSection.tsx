@@ -101,7 +101,7 @@ export default function ContactSection({ inquiry }: { inquiry: { details: string
         <div className="contact-panel">
           <div className="contact-panel-head">
             <Building2 size={20} strokeWidth={1.6} />
-            <div><h3>نموذج استفسار</h3><p>{whatsappReady ? 'أربعة حقول، ثم يُفتح واتساب برسالة جاهزة.' : 'أربعة حقول تُرتَّب في رسالة جاهزة للنسخ.'}</p></div>
+            <div><h3>تواصل معانا</h3></div>
           </div>
           <Form {...form}>
             <form className="inquiry-form" onSubmit={form.handleSubmit(onSubmit)} noValidate>
