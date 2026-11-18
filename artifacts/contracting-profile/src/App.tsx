@@ -182,7 +182,6 @@ function Home() {
                 return <article className="service-card" key={service.title}>
                   <div className="service-top" aria-hidden="true">
                     <span className="service-icon"><Icon size={24} strokeWidth={1.65} /></span>
-                    <span className="service-index" dir="ltr">{String(index + 1).padStart(2, '0')}</span>
                   </div>
                   <h3>{service.title}</h3><p>{service.text}</p>
                   <a href="#contact" className="service-inquiry" aria-label={`استفسر عن ${service.title}`} data-testid={`link-service-${index + 1}`}>

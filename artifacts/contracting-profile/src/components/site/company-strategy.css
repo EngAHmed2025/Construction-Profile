@@ -35,7 +35,6 @@
 .strategy-planning { background: #f1eade; }
 .strategy-card-top { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 8px; color: var(--strategy-accent); }
 .strategy-icon { display: grid; place-items: center; width: 47px; height: 47px; border: 1px solid currentColor; border-radius: 10px; }
-.strategy-number { direction: ltr; font: 600 .92rem var(--app-font-mono); letter-spacing: .08em; }
 .strategy-card h4 { margin: 17px 0 8px; color: var(--strategy-ink); font-size: clamp(1.35rem, 2.2vw, 1.8rem); line-height: 1.4; }
 .strategy-card p, .strategy-steps { margin: 0; color: var(--strategy-copy); font-size: .97rem; line-height: 1.8; }
 .strategy-steps { display: grid; width: 100%; padding: 0; list-style: none; }
