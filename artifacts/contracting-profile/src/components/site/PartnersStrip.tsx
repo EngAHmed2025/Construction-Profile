@@ -50,7 +50,7 @@ export default function PartnersStrip() {
       onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
       <div className="container-wide partners-inner">
         <div className="partners-heading">
-          <h2 id="partners-title">شركاء النجاح</h2>
+          <h2 id="partners-title">شركاء <span>النجاح</span></h2>
           <div className="partners-controls" role="group" aria-label="التحكم في عرض الشعارات">
             <button type="button" aria-label="الشعار السابق" onClick={() => carousel?.scrollPrev()}><ArrowRight size={19} strokeWidth={1.6} aria-hidden="true" /></button>
             <button type="button" aria-label="الشعار التالي" onClick={() => carousel?.scrollNext()}><ArrowLeft size={19} strokeWidth={1.6} aria-hidden="true" /></button>
