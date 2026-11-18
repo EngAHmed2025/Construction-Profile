@@ -1,3 +1,25 @@
+/* Native scrollbar styling keeps keyboard, touch and smooth scrolling intact. */
+html { scrollbar-color: #385348 #ebe6da; }
+@supports selector(::-webkit-scrollbar) {
+  html { scrollbar-color: auto; }
+  ::-webkit-scrollbar { width: 12px; height: 12px; }
+  ::-webkit-scrollbar-track { background: #ebe6da; }
+  ::-webkit-scrollbar-thumb {
+    min-height: 44px;
+    background: #385348;
+    border: 3px solid #ebe6da;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: #826124; }
+  ::-webkit-scrollbar-thumb:active { background: #263c33; }
+  ::-webkit-scrollbar-corner { background: #ebe6da; }
+}
+@media (forced-colors: active) {
+  html { scrollbar-color: auto; }
+  ::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: Canvas; }
+  ::-webkit-scrollbar-thumb { background: ButtonText; border-color: Canvas; }
+}
+
 /* ——— Contact, footer & WhatsApp (Phase 1) ——— */
 .contact-copy > p { max-width: 470px; font-size: 15px; }
 .contact-details { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin-top: 28px; }
