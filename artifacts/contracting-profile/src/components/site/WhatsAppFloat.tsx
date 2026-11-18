@@ -49,7 +49,6 @@ export default function WhatsAppFloat() {
         data-testid="button-whatsapp-float"
       >
         <WhatsAppIcon size={26} />
-        <span className="wa-float-badge" aria-hidden="true" />
       </button>
     </div>
   );

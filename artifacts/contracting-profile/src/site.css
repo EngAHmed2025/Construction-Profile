@@ -90,10 +90,11 @@ a.contact-detail:focus-visible { outline: 2px solid #faf1d7; outline-offset: 3px
 .wa-float-wrap { position: fixed; z-index: 40; bottom: 24px; left: 24px; }
 a.wa-float { position: fixed; z-index: 40; bottom: 24px; left: 24px; }
 .wa-float-wrap .wa-float { position: relative; }
-.wa-float { display: grid; width: 58px; height: 58px; place-items: center; color: #fff; background: #1f8f55; border: 2px solid #f2efe5; border-radius: 50%; box-shadow: 0 12px 28px -10px rgba(20,40,30,.55); cursor: pointer; transition: transform .2s ease; }
-.wa-float:hover { transform: translateY(-2px); }
-.wa-float.is-unavailable { color: #f2efe5; background: #5b6a62; }
-.wa-float-badge { position: absolute; top: 3px; right: 3px; width: 13px; height: 13px; background: #d6a945; border: 2px solid #f2efe5; border-radius: 50%; }
+.wa-float { display: grid; width: 56px; height: 56px; padding: 0; place-items: center; color: #eed292; background: #30493f; border: 1px solid #d6b45e99; border-radius: 16px; box-shadow: 0 6px 18px #152c2333; cursor: pointer; transition: transform .2s ease, background-color .2s ease, color .2s ease, box-shadow .2s ease; }
+.wa-float:hover { transform: translateY(-3px); background: #263c33; color: #fff3d4; box-shadow: 0 9px 22px #152c234d; }
+.wa-float:focus-visible { outline: 2px solid #d6b45e; outline-offset: 4px; }
+.wa-float.is-unavailable { color: #eed292; background: #30493f; }
+@media (prefers-reduced-motion: reduce) { .wa-float { transition: none; } .wa-float:hover { transform: none; } }
 .wa-float-note { position: absolute; bottom: 70px; left: 0; width: min(300px, calc(100vw - 32px)); padding: 16px 16px 14px; color: #2b3e36; background: #f7f3e9; border: 1px solid #d3c7a8; border-radius: 8px; box-shadow: 0 20px 44px -22px rgba(25,40,32,.6); animation: wa-note-in .2s ease both; }
 .wa-float-note button { position: absolute; top: 6px; left: 6px; display: grid; width: 44px; height: 44px; place-items: center; color: #4c574f; background: none; border: 0; cursor: pointer; }
 .wa-float-note strong { display: block; padding-left: 36px; font-size: 15px; }
